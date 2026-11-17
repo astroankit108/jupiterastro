@@ -12,8 +12,8 @@ const DROPBOX_CONTENT_URL = "https://content.dropboxapi.com/2";
 const FIRESTORE_SCOPE = "https://www.googleapis.com/auth/datastore";
 const FIRESTORE_COLLECTION = "dropboxConnections";
 const FIREBASE_API_KEY = "AIzaSyDwXS689Y4gdyuD9-3ThCwsDiSHkyuNFpU";
-const DEFAULT_REDIRECT_URI = "https://jupiterastrology108.com/api/dropbox";
-const DEFAULT_POST_CONNECT_URL = "https://jupiterastrology108.com/8a9K79m85R0t2B7x6C7p48n8V16d0J85.html";
+const DEFAULT_REDIRECT_URI = "https://jupiterastro.in/api/dropbox";
+const DEFAULT_POST_CONNECT_URL = "https://jupiterastro.in/8a9K79m85R0t2B7x6C7p48n8V16d0J85.html";
 const STATE_COOKIE = "ja_dropbox_oauth";
 const STATE_TTL_SECONDS = 600;
 const MAX_DOWNLOAD_BYTES = 150 * 1024 * 1024;
@@ -34,7 +34,7 @@ function sendError(res, status, message) {
 }
 
 function requestUrl(req) {
-  return new URL(req.url || "/", "https://jupiterastrology108.com");
+  return new URL(req.url || "/", "https://jupiterastro.in");
 }
 
 function getAction(req) {
