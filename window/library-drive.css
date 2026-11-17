@@ -1,0 +1,636 @@
+/* =========================================================
+   JUPITER ASTRO — GOOGLE DRIVE LIBRARY
+   Apple/Finder-inspired read-only file browser.
+   All selectors remain scoped to the Library window.
+   ========================================================= */
+#ja-reference-library-window .ja-drive-browser,
+#ja-reference-library-window .ja-drive-browser * {
+  box-sizing:border-box;
+}
+#ja-reference-library-window .ja-drive-browser {
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
+  width:100%;
+  color:var(--ja-lib-ink,#292722);
+  background:var(--ja-lib-panel,#fff);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+#ja-reference-library-window .ja-drive-toolbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  min-height:48px;
+  padding:8px 15px;
+  border-bottom:1px solid var(--ja-lib-line,#e5e1d9);
+  background:var(--ja-lib-panel,var(--surface,#fff));
+}
+#ja-reference-library-window .ja-drive-breadcrumb {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+  overflow:auto;
+  color:var(--ja-lib-muted,#777);
+  font-size:11px;
+  white-space:nowrap;
+  scrollbar-width:thin;
+}
+#ja-reference-library-window .ja-drive-crumb {
+  max-width:240px;
+  overflow:hidden;
+  padding:5px 7px;
+  border:0;
+  border-radius:6px;
+  color:var(--ja-lib-accent,#94652e);
+  background:transparent;
+  cursor:pointer;
+  font:inherit;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#ja-reference-library-window .ja-drive-crumb:hover:not(:disabled) {
+  background:var(--ja-lib-hover,#f5f3ef);
+}
+#ja-reference-library-window .ja-drive-crumb:disabled {
+  color:var(--ja-lib-ink,#292722);
+  font-weight:700;
+  cursor:default;
+}
+#ja-reference-library-window .ja-drive-crumb-separator {
+  color:var(--ja-lib-muted,#a6a19a);
+  user-select:none;
+}
+#ja-reference-library-window .ja-drive-toolbar-actions {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:0 0 auto;
+}
+#ja-reference-library-window .ja-drive-cache-label {
+  color:var(--ja-lib-muted,#888);
+  font-size:10px;
+  white-space:nowrap;
+}
+#ja-reference-library-window .ja-drive-icon-button,
+#ja-reference-library-window .ja-drive-text-button,
+#ja-reference-library-window .ja-drive-load-more {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:30px;
+  padding:6px 10px;
+  border:1px solid var(--ja-lib-line-strong,#d8d3ca);
+  border-radius:8px;
+  color:var(--ja-lib-ink,#3f3b35);
+  background:var(--ja-lib-panel,#fff);
+  cursor:pointer;
+  font:inherit;
+  font-size:11px;
+  transition:background .15s ease,border-color .15s ease,box-shadow .15s ease;
+}
+#ja-reference-library-window .ja-drive-icon-button {
+  width:31px;
+  padding:0;
+  font-size:17px;
+}
+#ja-reference-library-window .ja-drive-icon-button:hover,
+#ja-reference-library-window .ja-drive-text-button:hover,
+#ja-reference-library-window .ja-drive-load-more:hover {
+  border-color:var(--ja-lib-accent,#a87332);
+  background:var(--ja-lib-hover,#f5f3ef);
+}
+#ja-reference-library-window .ja-drive-controls {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-height:48px;
+  padding:8px 14px;
+  border-bottom:1px solid var(--ja-lib-line,#ece8e1);
+  background:var(--ja-lib-panel-alt,#faf9f7);
+}
+#ja-reference-library-window .ja-drive-select {
+  min-width:145px;
+  max-width:210px;
+  height:32px;
+  padding:0 29px 0 10px;
+  border:1px solid var(--ja-lib-line-strong,#ded9d0);
+  border-radius:8px;
+  outline:none;
+  color:var(--ja-lib-ink,#3f3b35);
+  background:var(--ja-lib-panel,#fff);
+  font:inherit;
+  font-size:11px;
+  cursor:pointer;
+}
+#ja-reference-library-window .ja-drive-select:focus {
+  border-color:var(--ja-lib-accent,#a87332);
+  box-shadow:0 0 0 3px var(--ja-lib-accent-soft,rgba(168,115,50,.12));
+}
+#ja-reference-library-window .ja-drive-list-summary {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:37px;
+  padding:8px 15px 7px;
+  color:var(--ja-lib-muted,#858078);
+  font-size:10px;
+}
+#ja-reference-library-window .ja-drive-list-summary strong {
+  color:var(--ja-lib-ink,#4a453d);
+  font-size:10px;
+  font-weight:700;
+}
+#ja-reference-library-window .ja-drive-list-summary span {
+  overflow:hidden;
+  text-align:right;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#ja-reference-library-window .ja-drive-table {
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  padding-bottom:8px;
+}
+#ja-reference-library-window .ja-drive-columns {
+  position:sticky;
+  top:0;
+  z-index:1;
+  display:grid;
+  grid-template-columns:minmax(220px,1fr) minmax(105px,160px) minmax(75px,100px);
+  align-items:center;
+  min-height:32px;
+  padding:0 16px 0 17px;
+  border-top:1px solid var(--ja-lib-line,#eee);
+  border-bottom:1px solid var(--ja-lib-line,#e8e4dd);
+  color:var(--ja-lib-muted,#817c73);
+  background:var(--ja-lib-panel-alt,#f8f7f5);
+  font-size:10px;
+  font-weight:650;
+  letter-spacing:.15px;
+}
+#ja-reference-library-window .ja-drive-columns span:nth-child(2),
+#ja-reference-library-window .ja-drive-columns span:nth-child(3) {
+  text-align:right;
+}
+#ja-reference-library-window .ja-drive-row {
+  display:grid;
+  grid-template-columns:minmax(220px,1fr) minmax(105px,160px) minmax(75px,100px);
+  align-items:center;
+  gap:10px;
+  width:100%;
+  min-height:53px;
+  padding:6px 16px;
+  border:0;
+  border-bottom:1px solid color-mix(in srgb,var(--ja-lib-line,#eee) 78%,transparent);
+  border-radius:0;
+  color:var(--ja-lib-ink,#292722);
+  background:transparent;
+  text-align:left;
+  cursor:default;
+  font:inherit;
+  transition:background .12s ease,box-shadow .12s ease;
+}
+#ja-reference-library-window .ja-drive-row:hover {
+  background:var(--ja-lib-hover,#f7f5f1);
+}
+#ja-reference-library-window .ja-drive-row.selected {
+  background:var(--ja-lib-active-bg,rgba(168,115,50,.13));
+  box-shadow:inset 3px 0 var(--ja-lib-accent,#a87332);
+}
+#ja-reference-library-window .ja-drive-row:focus-visible {
+  outline:2px solid var(--ja-lib-accent,#a87332);
+  outline-offset:-2px;
+}
+#ja-reference-library-window .ja-drive-name-cell {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+#ja-reference-library-window .ja-drive-file-icon {
+  display:grid;
+  place-items:center;
+  flex:0 0 34px;
+  width:34px;
+  height:34px;
+  border:1px solid var(--ja-lib-line,#e9e5de);
+  border-radius:9px;
+  color:var(--ja-lib-icon-ink,var(--ja-lib-accent,#8a663d));
+  background:var(--ja-lib-icon-bg,#f2eadf);
+  font-size:10px;
+  font-weight:750;
+  letter-spacing:-.2px;
+}
+#ja-reference-library-window .ja-drive-file-icon.type-folder {
+  color:#b27a2f;
+  background:#faf1df;
+  border-color:#f0e3c9;
+  font-size:16px;
+}
+#ja-reference-library-window .ja-drive-file-icon.type-pdf {
+  color:#bd5148;
+  background:#faeceb;
+  border-color:#f1d9d7;
+}
+#ja-reference-library-window .ja-drive-file-icon.type-spreadsheet {
+  color:#37835c;
+  background:#eaf4ee;
+  border-color:#d8eadd;
+  font-size:15px;
+}
+#ja-reference-library-window .ja-drive-file-icon.type-document {
+  color:#4779b5;
+  background:#edf3fb;
+  border-color:#dce7f5;
+}
+#ja-reference-library-window .ja-drive-file-icon.type-presentation {
+  color:#b87539;
+  background:#fbf0e6;
+  border-color:#f0dfcd;
+}
+#ja-reference-library-window .ja-drive-file-icon.type-image {
+  color:#8065b3;
+  background:#f1edfa;
+  border-color:#e4dcf4;
+  font-size:15px;
+}
+#ja-reference-library-window .ja-drive-file-name {
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  min-width:0;
+  flex:1;
+}
+#ja-reference-library-window .ja-drive-file-name strong {
+  overflow:hidden;
+  color:var(--ja-lib-ink,#292722);
+  font-size:12px;
+  font-weight:650;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#ja-reference-library-window .ja-drive-file-name small {
+  overflow:hidden;
+  color:var(--ja-lib-muted,#888);
+  font-size:10px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#ja-reference-library-window .ja-drive-modified,
+#ja-reference-library-window .ja-drive-file-size {
+  overflow:hidden;
+  color:var(--ja-lib-muted,#888);
+  font-size:10px;
+  text-align:right;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+#ja-reference-library-window .ja-drive-no-files {
+  display:grid;
+  place-items:center;
+  min-height:150px;
+  padding:25px;
+  color:var(--ja-lib-muted,#888);
+  font-size:12px;
+  text-align:center;
+}
+#ja-reference-library-window .ja-drive-more-wrap {
+  display:flex;
+  justify-content:center;
+  padding:14px;
+}
+#ja-reference-library-window .ja-drive-load-more {
+  min-width:135px;
+  color:var(--ja-lib-accent,#94652e);
+  font-weight:650;
+}
+#ja-reference-library-window .ja-drive-empty {
+  min-height:100%;
+}
+#ja-reference-library-window .ja-drive-empty .ja-drive-button {
+  margin-top:8px;
+}
+#ja-reference-library-window .ja-lib-provider.is-connected .ja-lib-provider-state {
+  background:#2da765;
+  box-shadow:0 0 0 3px rgba(45,167,101,.13);
+}
+#ja-reference-library-window .ja-lib-notice.error {
+  color:#8b3a32;
+  border-color:#e7c3be;
+  background:#fff2ef;
+}
+@media(max-width:720px) {
+  #ja-reference-library-window .ja-drive-toolbar {
+    gap:7px;
+    padding:7px 9px;
+  }
+  #ja-reference-library-window .ja-drive-cache-label {
+    display:none;
+  }
+  #ja-reference-library-window .ja-drive-controls {
+    gap:6px;
+    padding:7px 9px;
+  }
+  #ja-reference-library-window .ja-drive-select {
+    min-width:0;
+    max-width:none;
+    width:50%;
+    flex:1;
+  }
+  #ja-reference-library-window .ja-drive-columns,
+  #ja-reference-library-window .ja-drive-row {
+    grid-template-columns:minmax(0,1fr) minmax(70px,100px);
+    padding-left:9px;
+    padding-right:9px;
+  }
+  #ja-reference-library-window .ja-drive-columns span:nth-child(2),
+  #ja-reference-library-window .ja-drive-row .ja-drive-modified {
+    display:none;
+  }
+  #ja-reference-library-window .ja-drive-file-icon {
+    flex-basis:30px;
+    width:30px;
+    height:30px;
+  }
+}
+@media(max-width:420px) {
+  #ja-reference-library-window .ja-drive-text-button {
+    padding:5px 7px;
+    font-size:10px;
+  }
+  #ja-reference-library-window .ja-drive-row {
+    gap:6px;
+    min-height:49px;
+  }
+  #ja-reference-library-window .ja-drive-file-size {
+    font-size:9px;
+  }
+}
+
+/* =========================================================
+   COMPACT SINGLE-LINE LIBRARY TOOLBAR
+   ========================================================= */
+#ja-reference-library-window.ja-lib-drive-active .ja-lib-main-top {
+  display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+  margin-bottom:9px;
+  padding:0 0 2px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:none;
+}
+#ja-reference-library-window.ja-lib-drive-active .ja-lib-main-top::-webkit-scrollbar {
+  display:none;
+}
+#ja-reference-library-window.ja-lib-drive-active .ja-lib-heading {
+  flex:0 0 auto;
+  margin:0;
+  font-size:17px;
+  line-height:1;
+  white-space:nowrap;
+}
+#ja-reference-library-window.ja-lib-drive-active .ja-lib-readonly,
+#ja-reference-library-window.ja-lib-drive-active .ja-lib-readonly[hidden] {
+  display:none !important;
+}
+#ja-reference-library-window.ja-lib-drive-active .ja-lib-search-wrap {
+  flex:0 0 205px;
+  width:205px;
+  min-width:155px;
+  max-width:205px;
+  margin:0 2px 0 auto;
+}
+#ja-reference-library-window.ja-lib-drive-active .ja-lib-search {
+  height:32px;
+  padding-left:31px;
+  border-radius:8px;
+  font-size:11px;
+}
+#ja-reference-library-window.ja-lib-drive-active .ja-lib-search-icon {
+  top:6px;
+}
+#ja-reference-library-window .ja-drive-inline-controls {
+  display:flex;
+  align-items:center;
+  flex:1 0 auto;
+  gap:7px;
+  min-width:max-content;
+}
+#ja-reference-library-window .ja-drive-inline-controls .ja-drive-select {
+  flex:0 0 auto;
+  height:31px;
+  min-width:0;
+  padding:0 24px 0 8px;
+  border-radius:7px;
+  font-size:10.5px;
+}
+#ja-reference-library-window .ja-drive-inline-controls .ja-drive-select:first-child {
+  width:104px;
+}
+#ja-reference-library-window .ja-drive-inline-controls .ja-drive-select:nth-child(2) {
+  width:126px;
+}
+#ja-reference-library-window .ja-drive-inline-count {
+  flex:0 0 auto;
+  color:var(--ja-lib-ink,#4a453d);
+  font-size:10px;
+  font-weight:700;
+  white-space:nowrap;
+}
+#ja-reference-library-window .ja-drive-inline-path {
+  display:flex;
+  align-items:center;
+  gap:2px;
+  min-width:55px;
+  max-width:190px;
+  overflow:hidden;
+  color:var(--ja-lib-muted,#817c73);
+  font-size:10px;
+  white-space:nowrap;
+}
+#ja-reference-library-window .ja-drive-inline-path .ja-drive-crumb {
+  max-width:100px;
+  padding:4px 3px;
+  font-size:10px;
+}
+#ja-reference-library-window .ja-drive-inline-controls .ja-drive-icon-button {
+  flex:0 0 30px;
+  width:30px;
+  height:30px;
+  min-height:30px;
+  border-radius:7px;
+}
+#ja-reference-library-window .ja-drive-inline-controls .ja-drive-text-button {
+  flex:0 0 auto;
+  min-height:30px;
+  padding:5px 8px;
+  border-radius:7px;
+  font-size:10px;
+}
+#ja-reference-library-window .ja-drive-browser {
+  min-height:100%;
+  background:var(--ja-lib-panel,#fff);
+}
+#ja-reference-library-window .ja-drive-columns,
+#ja-reference-library-window .ja-drive-row {
+  grid-template-columns:minmax(180px,1fr) minmax(95px,130px) minmax(65px,85px);
+}
+#ja-reference-library-window .ja-drive-columns {
+  min-height:27px;
+  padding:0 12px;
+  font-size:9.5px;
+}
+#ja-reference-library-window .ja-drive-row {
+  min-height:39px;
+  gap:8px;
+  padding:4px 12px;
+  cursor:pointer;
+  user-select:none;
+}
+#ja-reference-library-window .ja-drive-name-cell {
+  gap:8px;
+}
+#ja-reference-library-window .ja-drive-file-icon {
+  flex-basis:27px;
+  width:27px;
+  height:27px;
+  border-radius:7px;
+  font-size:9px;
+}
+#ja-reference-library-window .ja-drive-file-icon.type-folder {
+  font-size:13px;
+}
+#ja-reference-library-window .ja-drive-file-title {
+  display:block;
+  min-width:0;
+  overflow:hidden;
+  color:var(--ja-lib-ink,#292722);
+  font-size:11px;
+  font-weight:600;
+  line-height:1.25;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  user-select:text;
+  cursor:text;
+}
+#ja-reference-library-window .ja-drive-row.selected .ja-drive-file-title {
+  color:var(--ja-lib-ink,#292722);
+}
+#ja-reference-library-window .ja-drive-modified,
+#ja-reference-library-window .ja-drive-file-size {
+  font-size:9.5px;
+}
+#ja-reference-library-window .ja-drive-row:focus-visible {
+  outline:2px solid var(--ja-lib-accent,#a87332);
+  outline-offset:-2px;
+}
+#ja-reference-library-window .ja-drive-no-files {
+  min-height:100px;
+  font-size:11px;
+}
+@media(max-width:850px) {
+  #ja-reference-library-window.ja-lib-drive-active .ja-lib-main-top {
+    gap:6px;
+  }
+  #ja-reference-library-window.ja-lib-drive-active .ja-lib-search-wrap {
+    flex-basis:170px;
+    width:170px;
+    max-width:170px;
+  }
+  #ja-reference-library-window .ja-drive-inline-path {
+    max-width:120px;
+  }
+}
+
+
+/* =========================================================
+   LIBRARY TOOLBAR WIDTH + SCROLL LAYERING CORRECTIONS
+   ========================================================= */
+
+/* Keep the Library heading/search/control row above the scrolling file pane. */
+#ja-reference-library-window.ja-lib-drive-active .ja-lib-main-top {
+  position:relative;
+  z-index:5;
+  isolation:isolate;
+  overflow-x:auto;
+  overflow-y:visible;
+}
+#ja-reference-library-window.ja-lib-drive-active .ja-lib-search-wrap {
+  flex:0 1 205px;
+  width:205px;
+  min-width:150px;
+  max-width:250px;
+  margin:0 6px 0 2px;
+}
+#ja-reference-library-window .ja-drive-inline-controls {
+  flex:1 1 0;
+  width:0;
+  min-width:0;
+  max-width:none;
+  overflow:visible;
+}
+#ja-reference-library-window .ja-drive-inline-controls .ja-drive-select {
+  flex-shrink:0;
+}
+#ja-reference-library-window .ja-drive-inline-path {
+  flex:1 1 110px;
+  min-width:70px;
+  max-width:none;
+}
+#ja-reference-library-window .ja-drive-inline-controls .ja-drive-text-button {
+  white-space:nowrap;
+}
+
+/* Isolate the scrolled file area below the Library toolbar. */
+#ja-reference-library-window .ja-lib-content {
+  position:relative;
+  z-index:1;
+  isolation:isolate;
+  min-width:0;
+}
+
+/* The green Name/Modified/Size header stays within the list pane. */
+#ja-reference-library-window .ja-drive-columns {
+  position:sticky;
+  top:0;
+  z-index:1;
+  isolation:isolate;
+}
+
+/* Hovered rows and their filename text must remain visible above list chrome. */
+#ja-reference-library-window .ja-drive-row {
+  position:relative;
+  z-index:0;
+}
+#ja-reference-library-window .ja-drive-row:hover,
+#ja-reference-library-window .ja-drive-row:focus-visible {
+  z-index:2;
+}
+#ja-reference-library-window .ja-drive-row:hover .ja-drive-file-title {
+  color:var(--ja-lib-ink,#292722);
+  opacity:1;
+}
+#ja-reference-library-window .ja-drive-row:hover .ja-drive-modified,
+#ja-reference-library-window .ja-drive-row:hover .ja-drive-file-size {
+  color:var(--ja-lib-muted,#777);
+  opacity:1;
+}
+
+@media(max-width:850px) {
+  #ja-reference-library-window.ja-lib-drive-active .ja-lib-search-wrap {
+    flex:0 1 175px;
+    width:175px;
+    max-width:200px;
+  }
+  #ja-reference-library-window .ja-drive-inline-path {
+    flex-basis:75px;
+  }
+}

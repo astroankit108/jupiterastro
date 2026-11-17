@@ -1,0 +1,779 @@
+/* =========================================================
+   JUPITER ASTRO — DOCUMENT PREVIEW SURFACE
+   Theme tokens inherit from the Library window.
+   ========================================================= */
+#ja-reference-library-window .ja-lib-main { position:relative; }
+#ja-reference-library-window .ja-lib-preview,
+#ja-reference-library-window .ja-lib-preview * { box-sizing:border-box; }
+#ja-reference-library-window .ja-lib-preview {
+  position:absolute; inset:0; z-index:20; display:none; flex-direction:column;
+  min-width:0; min-height:0; overflow:hidden;
+  color:var(--ja-lib-ink,var(--ink,#292722));
+  background:var(--ja-lib-bg,var(--bg,#fbfaf8));
+}
+#ja-reference-library-window .ja-lib-preview.is-open { display:flex; }
+#ja-reference-library-window .ja-lib-preview-toolbar {
+  min-height:58px; display:flex; align-items:center; gap:12px; padding:8px 14px;
+  border-bottom:1px solid var(--ja-lib-line,var(--line,#ddd));
+  background:var(--ja-lib-panel,var(--surface,#fff));
+}
+#ja-reference-library-window .ja-lib-preview-back {
+  display:inline-flex; align-items:center; gap:7px; flex:0 0 auto;
+  padding:7px 10px; border:1px solid var(--ja-lib-line-strong,#ddd); border-radius:8px;
+  color:var(--ja-lib-ink,#222); background:var(--ja-lib-panel-alt,#f5f5f5); cursor:pointer; font:inherit;
+}
+#ja-reference-library-window .ja-lib-preview-back:hover,
+#ja-reference-library-window .ja-lib-preview-tool:hover:not(:disabled) { background:var(--ja-lib-hover,#eee); }
+#ja-reference-library-window .ja-lib-preview-back span:first-child { font-size:22px; line-height:14px; }
+#ja-reference-library-window .ja-lib-preview-file { display:flex; align-items:center; gap:9px; min-width:0; flex:1; }
+#ja-reference-library-window .ja-lib-preview-file-icon {
+  display:grid; place-items:center; flex:0 0 34px; width:34px; height:34px; border-radius:9px;
+  color:var(--ja-lib-icon-ink,var(--ja-lib-accent,#8a663d));
+  background:var(--ja-lib-icon-bg,var(--ja-lib-accent-soft,#f2eadf)); font-size:12px; font-weight:750;
+}
+#ja-reference-library-window .ja-lib-preview-file-meta { display:flex; flex-direction:column; min-width:0; gap:2px; }
+#ja-reference-library-window .ja-lib-preview-name {
+  overflow:hidden; color:var(--ja-lib-ink,#222); font-size:12px; font-weight:700;
+  text-overflow:ellipsis; white-space:nowrap;
+}
+#ja-reference-library-window .ja-lib-preview-subtitle { color:var(--ja-lib-muted,#777); font-size:10px; }
+#ja-reference-library-window .ja-lib-preview-tools { display:flex; align-items:center; justify-content:flex-end; gap:5px; flex:0 0 auto; }
+#ja-reference-library-window .ja-lib-preview-tool {
+  min-width:29px; height:29px; padding:0 7px; border:1px solid var(--ja-lib-line-strong,#ddd);
+  border-radius:7px; color:var(--ja-lib-ink,#222); background:var(--ja-lib-panel,var(--surface,#fff));
+  cursor:pointer; font:inherit; font-size:13px;
+}
+#ja-reference-library-window .ja-lib-preview-tool:disabled { opacity:.35; cursor:not-allowed; }
+#ja-reference-library-window .ja-lib-preview-counter {
+  min-width:46px; color:var(--ja-lib-muted,#777); font-size:11px; text-align:center; font-variant-numeric:tabular-nums;
+}
+#ja-reference-library-window .ja-lib-preview-note { color:var(--ja-lib-muted,#777); font-size:10px; white-space:nowrap; }
+#ja-reference-library-window .ja-lib-preview-stage {
+  display:flex; flex:1; min-height:0; min-width:0; overflow:auto;
+  align-items:flex-start; justify-content:center; padding:18px;
+  background:var(--ja-lib-bg,var(--bg,#fbfaf8));
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-spreadsheet {
+  flex-direction:column; align-items:stretch; justify-content:flex-start;
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-spreadsheet .ja-lib-sheet-tabs {
+  flex:0 0 auto;
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-spreadsheet .ja-lib-sheet-wrap {
+  flex:0 0 auto;
+}
+#ja-reference-library-window .ja-lib-slide-frame {
+  width:min(100%,1280px); margin:auto; background:#fff;
+  box-shadow:0 4px 22px rgba(0,0,0,.13);
+}
+#ja-reference-library-window .ja-lib-slide-frame > svg {
+  display:block; width:100%; height:auto; max-width:100%;
+}
+#ja-reference-library-window .ja-lib-preview-footer {
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  min-height:29px; padding:5px 13px; border-top:1px solid var(--ja-lib-line,var(--line,#ddd));
+  color:var(--ja-lib-muted,#777); background:var(--ja-lib-panel,var(--surface,#fff)); font-size:10px;
+}
+#ja-reference-library-window .ja-lib-preview-loading {
+  display:flex; align-items:center; justify-content:center; gap:11px;
+  min-height:180px; margin:auto; color:var(--ja-lib-muted,#777); font-size:12px;
+}
+#ja-reference-library-window .ja-lib-preview-spinner {
+  width:19px; height:19px; border:2px solid var(--ja-lib-line-strong,#ddd);
+  border-top-color:var(--ja-lib-accent,#a87332); border-radius:50%;
+  animation:ja-lib-preview-spin .8s linear infinite;
+}
+@keyframes ja-lib-preview-spin { to { transform:rotate(360deg); } }
+#ja-reference-library-window .ja-lib-preview-message-card {
+  align-self:center; max-width:440px; margin:auto; padding:30px 24px;
+  border:1px solid var(--ja-lib-line,var(--line,#ddd)); border-radius:14px;
+  color:var(--ja-lib-ink,#222); background:var(--ja-lib-panel,var(--surface,#fff));
+  text-align:center; box-shadow:0 8px 30px rgba(0,0,0,.06);
+}
+#ja-reference-library-window .ja-lib-preview-message-card h3 { margin:10px 0 6px; font-size:15px; }
+#ja-reference-library-window .ja-lib-preview-message-card p { margin:0; color:var(--ja-lib-muted,#777); font-size:12px; }
+#ja-reference-library-window .ja-lib-preview-message-card small { display:block; margin-top:10px; color:var(--ja-lib-muted,#777); font-size:10px; }
+#ja-reference-library-window .ja-lib-preview-open-drive {
+  display:inline-flex; align-items:center; justify-content:center;
+  margin-top:15px; padding:8px 13px; border:1px solid var(--ja-lib-accent,#a87332);
+  border-radius:8px; color:#fff; background:var(--ja-lib-accent,#a87332);
+  font-size:11px; font-weight:650; text-decoration:none;
+}
+#ja-reference-library-window .ja-lib-preview-open-drive:hover { filter:brightness(.96); }
+#ja-reference-library-window .ja-lib-preview-message-icon {
+  display:grid; place-items:center; width:38px; height:38px; margin:auto; border-radius:50%;
+  color:var(--ja-lib-alert-ink,#805a1e); background:var(--ja-lib-alert-bg,#fff2d8); font-weight:800;
+}
+#ja-reference-library-window .ja-lib-preview-page-frame { width:max-content; max-width:100%; padding:8px; background:#fff; box-shadow:0 4px 22px rgba(0,0,0,.13); }
+#ja-reference-library-window .ja-lib-drive-frame {
+  display:flex; width:100%; min-height:560px; height:100%; align-self:stretch;
+  overflow:hidden; border:1px solid var(--ja-lib-line,var(--line,#ddd));
+  border-radius:9px; background:var(--ja-lib-panel,var(--surface,#fff));
+}
+#ja-reference-library-window .ja-lib-drive-frame iframe {
+  display:block; width:100%; min-height:560px; height:100%; flex:1;
+  border:0; background:#fff;
+}
+#ja-reference-library-window .ja-lib-preview-page-frame canvas { display:block; max-width:100%; height:auto; }
+#ja-reference-library-window .ja-lib-preview-image-wrap { display:flex; align-items:center; justify-content:center; width:100%; min-height:100%; overflow:auto; }
+#ja-reference-library-window .ja-lib-preview-image {
+  display:block; max-width:100%; max-height:none; object-fit:contain;
+  transform-origin:center center; box-shadow:0 4px 22px rgba(0,0,0,.10);
+}
+#ja-reference-library-window .ja-lib-docx-page {
+  width:min(850px,100%); min-height:100%; padding:48px 56px;
+  color:#222; background:#fff; box-shadow:0 4px 22px rgba(0,0,0,.12);
+  font:14px/1.65 Georgia,"Times New Roman",serif; overflow-wrap:anywhere;
+}
+#ja-reference-library-window .ja-lib-docx-page h1,
+#ja-reference-library-window .ja-lib-docx-page h2,
+#ja-reference-library-window .ja-lib-docx-page h3 { color:#222; margin:1.2em 0 .5em; }
+#ja-reference-library-window .ja-lib-docx-page p { margin:.6em 0; }
+#ja-reference-library-window .ja-lib-docx-page table { width:100%; border-collapse:collapse; margin:1em 0; font:12px/1.45 Arial,sans-serif; }
+#ja-reference-library-window .ja-lib-docx-page td,
+#ja-reference-library-window .ja-lib-docx-page th { border:1px solid #c9c9c9; padding:5px 7px; vertical-align:top; }
+#ja-reference-library-window .ja-lib-docx-page img { max-width:100%; height:auto; }
+#ja-reference-library-window .ja-lib-docx-page a { color:#1769aa; }
+#ja-reference-library-window .ja-lib-text-preview {
+  width:min(1100px,100%); min-height:100%; margin:0; padding:22px;
+  border:1px solid var(--ja-lib-line,var(--line,#ddd)); border-radius:10px;
+  color:var(--ja-lib-ink,#222); background:var(--ja-lib-panel,var(--surface,#fff));
+  font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere; tab-size:2;
+}
+#ja-reference-library-window .ja-lib-sheet-tabs {
+  display:flex; align-self:stretch; gap:3px; width:100%; min-height:34px; overflow-x:auto;
+  margin:-18px -18px 12px; padding:6px 14px 0;
+  border-bottom:1px solid var(--ja-lib-line,var(--line,#ddd)); background:var(--ja-lib-panel,var(--surface,#fff));
+}
+#ja-reference-library-window .ja-lib-sheet-tab {
+  padding:6px 12px; border:1px solid transparent; border-bottom:0; border-radius:7px 7px 0 0;
+  color:var(--ja-lib-muted,#777); background:transparent; cursor:pointer; font:inherit; font-size:11px; white-space:nowrap;
+}
+#ja-reference-library-window .ja-lib-sheet-tab.active {
+  color:var(--ja-lib-ink,#222); background:var(--ja-lib-bg,#fff);
+  border-color:var(--ja-lib-line,var(--line,#ddd)); font-weight:700;
+}
+#ja-reference-library-window .ja-lib-sheet-wrap {
+  width:max-content; min-width:100%; align-self:flex-start;
+  border:1px solid var(--ja-lib-line,var(--line,#ddd)); background:var(--ja-lib-panel,var(--surface,#fff));
+}
+#ja-reference-library-window .ja-lib-sheet-table { border-collapse:collapse; font:11px/1.4 Arial,sans-serif; color:#252525; }
+#ja-reference-library-window .ja-lib-sheet-table th,
+#ja-reference-library-window .ja-lib-sheet-table td {
+  min-width:88px; max-width:280px; padding:5px 9px; border:1px solid #d9dde3;
+  text-align:left; white-space:pre-wrap; overflow-wrap:anywhere;
+}
+#ja-reference-library-window .ja-lib-sheet-table thead th { position:sticky; top:0; z-index:1; background:#edf1f5; font-weight:700; }
+#ja-reference-library-window .ja-lib-sheet-table .row-number {
+  position:sticky; left:0; min-width:42px; max-width:42px; color:#616975; background:#f2f4f7; text-align:right;
+}
+#ja-reference-library-window .ja-lib-sheet-limit,
+#ja-reference-library-window .ja-lib-preview-empty-sheet { padding:12px; color:var(--ja-lib-muted,#777); font-size:11px; }
+#ja-reference-library-window .ja-lib-media-wrap { display:flex; align-items:center; justify-content:center; width:100%; min-height:100%; }
+#ja-reference-library-window .ja-lib-video { display:block; width:min(100%,1100px); max-height:100%; background:#111; }
+#ja-reference-library-window .ja-lib-audio { width:min(600px,100%); }
+@media (max-width:700px) {
+  #ja-reference-library-window .ja-lib-preview-toolbar { gap:7px; padding:7px 8px; }
+  #ja-reference-library-window .ja-lib-preview-back { padding:7px; }
+  #ja-reference-library-window .ja-lib-preview-back span:last-child { display:none; }
+  #ja-reference-library-window .ja-lib-preview-file-icon { display:none; }
+  #ja-reference-library-window .ja-lib-preview-name { font-size:11px; }
+  #ja-reference-library-window .ja-lib-preview-note { display:none; }
+  #ja-reference-library-window .ja-lib-preview-stage { padding:10px; }
+  #ja-reference-library-window .ja-lib-docx-page { padding:24px 20px; }
+}
+
+/* =========================================================
+   DOCUMENT READING IMPROVEMENTS
+   - selectable PDF text layer (layout based on PDF.js v6.5.438
+     web/text_layer_builder.css; Mozilla, Apache-2.0)
+   - continuous PDF scrolling in vertical/horizontal modes
+   - fixed A4-width Word document sheet
+   ========================================================= */
+
+/* The title subtitle now carries file type, source, preview state and size. */
+#ja-reference-library-window .ja-lib-preview-subtitle {
+  max-width:min(62vw,760px);
+  overflow:hidden;
+  color:var(--ja-lib-muted,#858078);
+  font-size:10px;
+  line-height:1.35;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#ja-reference-library-window .ja-lib-preview-footer {
+  display:none !important;
+}
+
+/* Continuous PDF viewport */
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf {
+  display:block;
+  overflow:auto;
+  padding:18px;
+  background:#e9ebee;
+  user-select:text;
+  -webkit-user-select:text;
+  overscroll-behavior:contain;
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf {
+  scroll-behavior:smooth;
+  touch-action:pan-x pan-y pinch-zoom;
+}
+#ja-reference-library-window .ja-lib-pdf-document {
+  display:flex;
+  width:max-content;
+  min-width:100%;
+  margin:0 auto;
+  gap:18px;
+  align-items:flex-start;
+}
+#ja-reference-library-window .ja-lib-pdf-document.is-vertical {
+  flex-direction:column;
+  align-items:center;
+}
+#ja-reference-library-window .ja-lib-pdf-document.is-horizontal {
+  flex-direction:row;
+  min-width:max-content;
+  min-height:100%;
+  align-items:center;
+  margin:0;
+  padding-bottom:4px;
+}
+#ja-reference-library-window .ja-lib-pdf-page-frame {
+  position:relative;
+  flex:0 0 auto;
+  display:block;
+  overflow:hidden;
+  margin:0 auto;
+  border:0;
+  background:#fff;
+  box-shadow:0 3px 18px rgba(0,0,0,.14);
+  direction:ltr;
+}
+#ja-reference-library-window .ja-lib-pdf-page-canvas {
+  position:absolute;
+  inset:0;
+  z-index:0;
+  display:block;
+  margin:0;
+  max-width:none;
+  pointer-events:none;
+  background:#fff;
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf .textLayer {
+  color-scheme:only light;
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:block;
+  overflow:clip;
+  margin:0;
+  padding:0;
+  color:transparent;
+  opacity:1;
+  line-height:1;
+  letter-spacing:normal;
+  word-spacing:normal;
+  text-size-adjust:none;
+  forced-color-adjust:none;
+  transform-origin:0 0;
+  pointer-events:auto;
+  user-select:text;
+  -webkit-user-select:text;
+  cursor:text;
+  --min-font-size:1;
+  --min-font-size-inv:1;
+  --text-scale-factor:calc(var(--total-scale-factor) * var(--min-font-size));
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf .textLayer > :not(.markedContent),
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf .textLayer .markedContent span:not(.markedContent) {
+  z-index:1;
+  --font-height:0;
+  font-size:calc(var(--text-scale-factor) * var(--font-height));
+  --scale-x:1;
+  --rotate:0deg;
+  transform:rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf .textLayer span,
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf .textLayer br {
+  position:absolute;
+  color:transparent;
+  white-space:pre;
+  cursor:text;
+  transform-origin:0 0;
+  user-select:text;
+  -webkit-user-select:text;
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf .textLayer .markedContent {
+  display:contents;
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf .textLayer span[role="img"] {
+  user-select:none;
+  -webkit-user-select:none;
+  cursor:default;
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf .textLayer ::selection {
+  color:transparent;
+  background:rgba(45,105,220,.28);
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-pdf .textLayer .highlight {
+  margin:-1px;
+  padding:1px;
+  border-radius:3px;
+  background:rgba(180,0,170,.2);
+}
+
+/* Word preview: fixed A4 sheet, independent of website palette. */
+#ja-reference-library-window .ja-lib-preview-stage.is-docx {
+  display:block;
+  overflow:auto;
+  padding:22px;
+  background:#e9ebee;
+  color:#222;
+  user-select:text;
+  -webkit-user-select:text;
+}
+#ja-reference-library-window .ja-lib-docx-page {
+  display:block;
+  box-sizing:border-box;
+  width:210mm;
+  max-width:calc(100vw - 150px);
+  min-height:297mm;
+  height:auto;
+  margin:0 auto 20px;
+  padding:18mm 17mm;
+  overflow:visible;
+  color:#222 !important;
+  background:#fff !important;
+  box-shadow:0 3px 18px rgba(0,0,0,.14);
+  font:11pt/1.5 Arial,Helvetica,sans-serif;
+  text-align:left;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  white-space:normal;
+  user-select:text;
+  -webkit-user-select:text;
+}
+#ja-reference-library-window .ja-lib-docx-page *,
+#ja-reference-library-window .ja-lib-docx-page p,
+#ja-reference-library-window .ja-lib-docx-page span,
+#ja-reference-library-window .ja-lib-docx-page li {
+  max-width:100%;
+  color:inherit;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+#ja-reference-library-window .ja-lib-docx-page table {
+  display:table;
+  box-sizing:border-box;
+  width:100% !important;
+  max-width:100% !important;
+  table-layout:fixed;
+  border-collapse:collapse;
+  border-spacing:0;
+  margin:8pt 0;
+  color:#222 !important;
+  background:#fff !important;
+  font:9.5pt/1.35 Arial,Helvetica,sans-serif;
+}
+#ja-reference-library-window .ja-lib-docx-page thead,
+#ja-reference-library-window .ja-lib-docx-page tbody,
+#ja-reference-library-window .ja-lib-docx-page tr {
+  max-width:100%;
+  background:#fff !important;
+}
+#ja-reference-library-window .ja-lib-docx-page td,
+#ja-reference-library-window .ja-lib-docx-page th {
+  box-sizing:border-box;
+  max-width:0;
+  min-width:0;
+  padding:5px 6px;
+  border:1px solid #c9c9c9;
+  color:#222 !important;
+  background:#fff !important;
+  vertical-align:top;
+  white-space:normal !important;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+#ja-reference-library-window .ja-lib-docx-page p {
+  margin:.45em 0;
+  line-height:1.5;
+}
+#ja-reference-library-window .ja-lib-docx-page img {
+  display:inline-block;
+  max-width:100% !important;
+  height:auto !important;
+  object-fit:contain;
+}
+#ja-reference-library-window .ja-lib-docx-page pre {
+  max-width:100%;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+#ja-reference-library-window .ja-lib-docx-page ul,
+#ja-reference-library-window .ja-lib-docx-page ol {
+  padding-inline-start:1.5em;
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-spreadsheet,
+#ja-reference-library-window .ja-lib-preview-stage.is-pptx {
+  user-select:text;
+  -webkit-user-select:text;
+}
+#ja-reference-library-window .ja-lib-preview-stage.is-spreadsheet .ja-lib-sheet-table td,
+#ja-reference-library-window .ja-lib-preview-stage.is-spreadsheet .ja-lib-sheet-table th {
+  user-select:text;
+  -webkit-user-select:text;
+}
+
+/* Compact muted status in the title bar; no separate bottom status strip. */
+#ja-reference-library-window .ja-lib-preview-toolbar {
+  min-height:56px;
+}
+#ja-reference-library-window .ja-lib-preview-file {
+  min-width:0;
+}
+#ja-reference-library-window .ja-lib-preview-file-meta {
+  min-width:0;
+}
+#ja-reference-library-window .ja-lib-preview-subtitle {
+  letter-spacing:.05px;
+}
+@media(max-width:700px) {
+  #ja-reference-library-window .ja-lib-docx-page {
+    width:100%;
+    max-width:100%;
+    min-height:0;
+    padding:24px 20px;
+  }
+  #ja-reference-library-window .ja-lib-preview-stage.is-pdf,
+  #ja-reference-library-window .ja-lib-preview-stage.is-docx {
+    padding:10px;
+  }
+  #ja-reference-library-window .ja-lib-preview-subtitle {
+    max-width:48vw;
+    font-size:9px;
+  }
+}
+
+
+/* =========================================================
+   DOCX RENDERER COMPARISON
+   Two real paths: browser HTML (docx-preview) and converted PDF.
+   ========================================================= */
+#ja-reference-library-window .ja-lib-docx-renderer-toggle {
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  flex:0 0 auto;
+  padding:3px;
+  border:1px solid var(--ja-lib-line-strong,#d8d3ca);
+  border-radius:9px;
+  background:var(--ja-lib-panel-alt,#f4f2ee);
+}
+#ja-reference-library-window .ja-lib-docx-toggle {
+  min-height:27px;
+  padding:4px 9px;
+  border:1px solid transparent;
+  border-radius:6px;
+  color:var(--ja-lib-muted,#777);
+  background:transparent;
+  cursor:pointer;
+  font:inherit;
+  font-size:10px;
+  font-weight:650;
+  white-space:nowrap;
+}
+#ja-reference-library-window .ja-lib-docx-toggle:hover {
+  color:var(--ja-lib-ink,#292722);
+  background:var(--ja-lib-hover,#eeece7);
+}
+#ja-reference-library-window .ja-lib-docx-toggle.active {
+  border-color:var(--ja-lib-line,#e5e1d9);
+  color:var(--ja-lib-ink,#292722);
+  background:var(--ja-lib-panel,#fff);
+  box-shadow:0 1px 2px rgba(0,0,0,.08);
+}
+
+/* docx-preview injects document-specific styles into this local container. */
+#ja-reference-library-window .ja-lib-preview-stage.is-docxjs {
+  display:block;
+  overflow:auto;
+  padding:0;
+  background:#e9ebee;
+  color:#222;
+  user-select:text;
+  -webkit-user-select:text;
+}
+#ja-reference-library-window .ja-lib-docxjs-styles {
+  display:none !important;
+}
+#ja-reference-library-window .ja-lib-docxjs-body {
+  display:block;
+  min-width:0;
+  min-height:100%;
+  user-select:text;
+  -webkit-user-select:text;
+}
+#ja-reference-library-window .ja-lib-docxjs-body .jaDocxLayout-wrapper {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:22px;
+  min-height:100%;
+  padding:22px 20px;
+  background:#e9ebee !important;
+  user-select:text;
+  -webkit-user-select:text;
+}
+#ja-reference-library-window .ja-lib-docxjs-body section.jaDocxLayout {
+  flex:0 0 auto;
+  margin:0 auto !important;
+  box-shadow:0 3px 18px rgba(0,0,0,.14) !important;
+  user-select:text;
+  -webkit-user-select:text;
+}
+#ja-reference-library-window .ja-lib-docxjs-body section.jaDocxLayout * {
+  user-select:text;
+  -webkit-user-select:text;
+}
+#ja-reference-library-window .ja-lib-docxjs-body .jaDocxLayout table {
+  border-collapse:collapse;
+}
+#ja-reference-library-window .ja-lib-docxjs-body .jaDocxLayout td,
+#ja-reference-library-window .ja-lib-docxjs-body .jaDocxLayout th {
+  vertical-align:top;
+}
+#ja-reference-library-window .ja-lib-docxjs-body .jaDocxLayout img {
+  max-width:100%;
+  height:auto;
+}
+#ja-reference-library-window .ja-lib-docxjs-body .jaDocxLayout a {
+  cursor:pointer;
+}
+#ja-reference-library-window .ja-lib-docxjs-body .jaDocxLayout-wrapper section.jaDocxLayout {
+  overflow:hidden;
+}
+#ja-reference-library-window .ja-lib-docx-renderer-notice {
+  position:sticky;
+  top:0;
+  z-index:5;
+  margin:10px 12px 0;
+  padding:8px 11px;
+  border:1px solid #e7d8ad;
+  border-radius:8px;
+  color:#70571d;
+  background:#fff8e7;
+  font-size:11px;
+  line-height:1.4;
+}
+@media(max-width:700px) {
+  #ja-reference-library-window .ja-lib-docx-toggle {
+    padding:4px 7px;
+    font-size:9px;
+  }
+  #ja-reference-library-window .ja-lib-docxjs-body .jaDocxLayout-wrapper {
+    padding:12px 8px;
+  }
+}
+
+
+/* User-controlled Windows local-font option in DOCX → HTML mode. */
+#ja-reference-library-window .ja-lib-docx-local-fonts {
+  border-color:var(--ja-lib-accent-soft,rgba(70,130,80,.28));
+  color:var(--ja-lib-accent,var(--ja-lib-ink,#3d6f43));
+}
+#ja-reference-library-window .ja-lib-docx-local-fonts.active {
+  border-color:var(--ja-lib-accent,#6b9a70);
+  color:var(--ja-lib-accent,#3d7747);
+  background:var(--ja-lib-accent-soft,rgba(70,130,80,.12));
+}
+#ja-reference-library-window .ja-lib-docx-local-fonts:focus-visible {
+  outline:2px solid var(--ja-lib-accent,#6b9a70);
+  outline-offset:2px;
+}
+
+
+/* =========================================================
+   UNIFIED IN-DOCUMENT SEARCH
+   Shared search field for PDF, Word, Excel, PowerPoint and text.
+   ========================================================= */
+#ja-reference-library-window .ja-lib-preview-search {
+  display:flex;
+  align-items:center;
+  flex:0 1 350px;
+  min-width:195px;
+  height:36px;
+  gap:5px;
+  padding:3px 4px 3px 10px;
+  border:1px solid var(--ja-lib-line-strong,#d5d9e0);
+  border-radius:10px;
+  color:var(--ja-lib-ink,#253044);
+  background:var(--ja-lib-panel-alt,#f8fafc);
+  box-shadow:inset 0 1px 2px rgba(15,23,42,.035);
+  transition:border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+#ja-reference-library-window .ja-lib-preview-search[hidden] {
+  display:none !important;
+}
+#ja-reference-library-window .ja-lib-preview-search:focus-within {
+  border-color:var(--ja-lib-accent,#a87332);
+  background:var(--ja-lib-panel,#fff);
+  box-shadow:0 0 0 3px var(--ja-lib-accent-soft,rgba(168,115,50,.13));
+}
+#ja-reference-library-window .ja-lib-preview-search-icon {
+  display:inline-flex;
+  flex:0 0 17px;
+  width:17px;
+  height:17px;
+  align-items:center;
+  justify-content:center;
+  color:var(--ja-lib-muted,#7b8493);
+}
+#ja-reference-library-window .ja-lib-preview-search-icon svg {
+  display:block;
+  width:17px;
+  height:17px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+#ja-reference-library-window .ja-lib-preview-search-input {
+  flex:1 1 auto;
+  min-width:45px;
+  width:100%;
+  height:27px;
+  padding:3px 4px;
+  border:0;
+  outline:0;
+  color:var(--ja-lib-ink,#253044);
+  background:transparent;
+  font:inherit;
+  font-size:12px;
+  font-weight:500;
+  line-height:1.3;
+  box-shadow:none;
+}
+#ja-reference-library-window .ja-lib-preview-search-input::placeholder {
+  color:var(--ja-lib-muted,#8991a0);
+  opacity:1;
+}
+#ja-reference-library-window .ja-lib-preview-search-input:disabled {
+  opacity:.55;
+  cursor:wait;
+}
+#ja-reference-library-window .ja-lib-preview-search-count {
+  flex:0 0 auto;
+  min-width:34px;
+  padding:0 3px;
+  color:var(--ja-lib-muted,#7b8493);
+  font-size:10px;
+  font-variant-numeric:tabular-nums;
+  text-align:center;
+  white-space:nowrap;
+}
+#ja-reference-library-window .ja-lib-preview-search-nav {
+  display:grid;
+  flex:0 0 27px;
+  place-items:center;
+  width:27px;
+  height:27px;
+  padding:0;
+  border:1px solid var(--ja-lib-line,#e1e5eb);
+  border-radius:7px;
+  color:var(--ja-lib-ink,#3a4556);
+  background:var(--ja-lib-panel,#fff);
+  cursor:pointer;
+  transition:color .14s ease, border-color .14s ease, background .14s ease, transform .14s ease;
+}
+#ja-reference-library-window .ja-lib-preview-search-nav svg {
+  display:block;
+  width:14px;
+  height:14px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+#ja-reference-library-window .ja-lib-preview-search-nav:hover:not(:disabled) {
+  color:var(--ja-lib-accent,#a87332);
+  border-color:var(--ja-lib-accent,#a87332);
+  background:var(--ja-lib-accent-soft,rgba(168,115,50,.1));
+}
+#ja-reference-library-window .ja-lib-preview-search-nav:active:not(:disabled) {
+  transform:translateY(1px);
+}
+#ja-reference-library-window .ja-lib-preview-search-nav:disabled {
+  opacity:.35;
+  cursor:not-allowed;
+}
+#ja-reference-library-window .ja-lib-preview-search-nav:focus-visible {
+  outline:2px solid var(--ja-lib-accent,#a87332);
+  outline-offset:2px;
+}
+#ja-reference-library-window .ja-lib-preview-search-count {
+  user-select:none;
+}
+
+/* Search result colours are deliberately distinct from ordinary text selection. */
+::highlight(ja-lib-search-results) {
+  color:inherit;
+  background:rgba(255,205,65,.48);
+  text-decoration:underline;
+  text-decoration-color:rgba(194,132,20,.65);
+  text-decoration-thickness:1px;
+}
+::highlight(ja-lib-search-active) {
+  color:#231800;
+  background:rgba(255,155,35,.78);
+  text-decoration:underline;
+  text-decoration-color:#99520c;
+  text-decoration-thickness:2px;
+}
+
+@media(max-width:980px) {
+  #ja-reference-library-window .ja-lib-preview-search {
+    flex-basis:290px;
+    min-width:180px;
+  }
+}
+@media(max-width:700px) {
+  #ja-reference-library-window .ja-lib-preview-toolbar {
+    flex-wrap:wrap;
+    row-gap:6px;
+  }
+  #ja-reference-library-window .ja-lib-preview-file {
+    flex:1 1 calc(100% - 68px);
+  }
+  #ja-reference-library-window .ja-lib-preview-search {
+    order:3;
+    flex:1 1 190px;
+    min-width:145px;
+  }
+  #ja-reference-library-window .ja-lib-preview-tools {
+    order:4;
+    flex:0 1 auto;
+    max-width:100%;
+    overflow-x:auto;
+    justify-content:flex-start;
+  }
+}
+@media(max-width:420px) {
+  #ja-reference-library-window .ja-lib-preview-search {
+    min-width:130px;
+    gap:3px;
+    padding-left:7px;
+  }
+  #ja-reference-library-window .ja-lib-preview-search-count {
+    min-width:28px;
+    font-size:9px;
+  }
+  #ja-reference-library-window .ja-lib-preview-search-nav {
+    flex-basis:25px;
+    width:25px;
+    height:25px;
+  }
+}

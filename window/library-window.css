@@ -1,0 +1,738 @@
+/* =========================================================
+   JUPITER ASTRO — REFERENCE LIBRARY WINDOW
+   ========================================================= */
+#ja-reference-library-window,
+#ja-reference-library-window *,
+#ja-reference-library-launcher,
+#ja-reference-library-launcher * { box-sizing: border-box; }
+
+#ja-reference-library-window {
+  --bg: #fbfaf8;
+  --line: rgba(70,60,48,.13);
+  --ink: #292722;
+  --muted: #77736b;
+  position: fixed; z-index: 2147483000; left: 50%; top: 50%;
+  transform: translate(-50%,-50%);
+  width: min(1060px,calc(100vw - 36px));
+  height: min(720px,calc(100vh - 36px));
+  min-width: min(340px,calc(100vw - 16px)); min-height: 300px;
+  max-width: calc(100vw - 16px); max-height: calc(100vh - 16px);
+  display: none; flex-direction: column; overflow: hidden; resize: both;
+  color: var(--ink); background: var(--bg);
+  border: 1px solid rgba(255,255,255,.85); border-radius: 15px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.30),0 4px 18px rgba(0,0,0,.13);
+  font: 14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  isolation: isolate;
+}
+#ja-reference-library-window.ja-lib-open { display: flex; }
+#ja-reference-library-window.ja-lib-maximized {
+  inset: 10px; left: 10px; top: 10px; width: auto; height: auto;
+  max-width: none; max-height: none; min-width: 0; min-height: 0;
+  transform: none; resize: none; border-radius: 12px;
+}
+#ja-reference-library-window button,
+#ja-reference-library-launcher button { font: inherit; }
+
+#ja-reference-library-window .ja-lib-titlebar {
+  height: 48px; min-height: 48px; display: flex; align-items: center;
+  gap: 12px; padding: 0 14px;
+  background: linear-gradient(#f4f2ee,#eae7e1);
+  border-bottom: 1px solid var(--line); cursor: grab;
+  user-select: none; touch-action: none;
+}
+#ja-reference-library-window .ja-lib-titlebar:active { cursor: grabbing; }
+#ja-reference-library-window .ja-lib-window-controls { display:flex;align-items:center;gap:8px;flex:0 0 auto; }
+#ja-reference-library-window .ja-lib-dot {
+  width:12px;height:12px;border:0;border-radius:50%;padding:0;cursor:pointer;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.10);
+}
+#ja-reference-library-window .close { background:#ff6058; }
+#ja-reference-library-window .minimize { background:#ffbd2e; }
+#ja-reference-library-window .maximize { background:#28c840; }
+#ja-reference-library-window .ja-lib-window-title {
+  flex:1;min-width:0;text-align:center;font-weight:650;font-size:13px;
+  letter-spacing:.15px;color:#45413b;pointer-events:none;
+}
+#ja-reference-library-window .ja-lib-header-spacer { width:44px;flex:0 0 44px; }
+#ja-reference-library-window .ja-lib-body { display:grid;grid-template-columns:205px minmax(0,1fr);min-height:0;flex:1; }
+#ja-reference-library-window .ja-lib-body {
+  position:relative;
+  isolation:isolate;
+}
+#ja-reference-library-window .ja-lib-sidebar {
+  position:relative;
+  z-index:5;
+  min-height:0;overflow:auto;padding:18px 12px;background:#f5f3ef;
+  border-right:1px solid var(--line);
+}
+#ja-reference-library-window .ja-lib-main {
+  position:relative;
+  z-index:1;
+}
+#ja-reference-library-window .ja-lib-side-heading {
+  margin:0 9px 10px;color:#89847b;font-size:10px;font-weight:750;
+  letter-spacing:1.1px;text-transform:uppercase;
+}
+#ja-reference-library-window .ja-lib-provider {
+  width:100%;display:flex;align-items:center;gap:10px;padding:10px 11px;
+  margin:3px 0;border:0;border-radius:8px;color:#4a463f;
+  background:transparent;text-align:left;cursor:pointer;
+}
+#ja-reference-library-window .ja-lib-provider:hover { background:#eae7e1; }
+#ja-reference-library-window .ja-lib-provider.active { background:#e9dfd0;color:#694516;font-weight:650; }
+#ja-reference-library-window .ja-lib-provider-icon {
+  display:inline-flex;align-items:center;justify-content:center;flex:0 0 24px;
+  width:24px;height:24px;color:var(--ja-lib-icon-ink,var(--ja-lib-accent,#6b7280));
+}
+#ja-reference-library-window .ja-lib-provider-icon svg {
+  display:block;width:22px;height:22px;overflow:visible;
+}
+#ja-reference-library-window .ja-lib-provider-icon.provider-icon-all svg {
+  fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;
+}
+#ja-reference-library-window .ja-lib-provider-state { margin-left:auto;width:7px;height:7px;border-radius:50%;background:#c7c2b9; }
+#ja-reference-library-window .ja-lib-main {
+  min-width:0;min-height:0;display:flex;flex-direction:column;
+  padding:22px 24px 16px;overflow:hidden;
+}
+#ja-reference-library-window .ja-lib-main-top { display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:17px; }
+#ja-reference-library-window .ja-lib-heading { margin:0;font-size:20px;line-height:1.2;font-weight:700;color:#302c26; }
+#ja-reference-library-window .ja-lib-readonly {
+  display:inline-flex;align-items:center;gap:6px;padding:4px 9px;
+  border-radius:999px;color:#39744d;background:#e7f2e9;font-size:11px;font-weight:650;
+}
+#ja-reference-library-window .ja-lib-search-wrap { position:relative;margin-left:auto;min-width:190px;flex:1 1 240px;max-width:390px; }
+#ja-reference-library-window .ja-lib-search {
+  width:100%;height:37px;padding:0 12px 0 35px;border:1px solid #dedad2;
+  border-radius:8px;outline:none;color:var(--ink);background:#fff;font:inherit;
+}
+#ja-reference-library-window .ja-lib-search:focus { border-color:#c18b48;box-shadow:0 0 0 3px rgba(193,139,72,.13); }
+#ja-reference-library-window .ja-lib-search-icon { position:absolute;left:12px;top:8px;color:#89847b;pointer-events:none; }
+#ja-reference-library-window .ja-lib-content { min-height:0;flex:1;overflow:auto;border:1px solid #e7e3dc;border-radius:10px;background:#fff; }
+#ja-reference-library-window .ja-lib-empty {
+  min-height:250px;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:9px;padding:25px;
+  text-align:center;color:var(--muted);
+}
+#ja-reference-library-window .ja-lib-empty-symbol {
+  width:54px;height:54px;display:grid;place-items:center;border-radius:15px;
+  background:#f3eee6;color:#a97534;font-size:25px;
+}
+#ja-reference-library-window .ja-lib-empty strong { color:#464139;font-size:15px; }
+#ja-reference-library-window .ja-lib-empty p { max-width:410px;margin:0;font-size:12px; }
+#ja-reference-library-window .ja-lib-status {
+  min-height:30px;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding-top:10px;color:#89847b;font-size:11px;
+}
+#ja-reference-library-window .ja-lib-actions { display:flex;align-items:center;gap:8px; }
+#ja-reference-library-window .ja-lib-action {
+  padding:7px 12px;border:1px solid #ded9d0;border-radius:7px;
+  color:#777168;background:#f7f5f1;font-size:11px;cursor:not-allowed;opacity:.72;
+}
+#ja-reference-library-window .ja-lib-action.primary { color:#fff;border-color:#9e6929;background:#a87332; }
+#ja-reference-library-window .ja-lib-notice {
+  display:none;margin-top:10px;padding:9px 11px;border:1px solid #ead8b9;
+  border-radius:7px;color:#795522;background:#fff8eb;font-size:11px;
+}
+#ja-reference-library-window .ja-lib-notice.visible { display:block; }
+
+#ja-reference-library-launcher {
+  position:fixed;z-index:2147483001;right:22px;bottom:22px;display:none;
+  padding:0;border:1px solid rgba(255,255,255,.85);border-radius:12px;
+  background:#f5f1e9;box-shadow:0 8px 28px rgba(0,0,0,.2);
+}
+#ja-reference-library-launcher.visible { display:block; }
+#ja-reference-library-launcher button {
+  display:flex;align-items:center;gap:9px;padding:11px 15px;border:0;
+  border-radius:12px;color:#443a2d;background:transparent;font-weight:650;cursor:pointer;
+}
+#ja-reference-library-launcher button:hover { background:#ebe3d6; }
+
+@media (max-width:620px) {
+  #ja-reference-library-window {
+    width:calc(100vw - 12px);height:calc(100vh - 12px);min-width:0;min-height:260px;
+    max-width:calc(100vw - 12px);max-height:calc(100vh - 12px);border-radius:10px;
+  }
+  #ja-reference-library-window .ja-lib-body { grid-template-columns:132px minmax(0,1fr); }
+  #ja-reference-library-window .ja-lib-sidebar { padding:12px 7px; }
+  #ja-reference-library-window .ja-lib-provider { gap:6px;padding:9px 6px;font-size:11px; }
+  #ja-reference-library-window .ja-lib-main { padding:15px 12px 10px; }
+  #ja-reference-library-window .ja-lib-heading { font-size:17px; }
+  #ja-reference-library-window .ja-lib-header-spacer { width:10px;flex-basis:10px; }
+}
+
+
+/* =========================================================
+   FULLSCREEN + INSTALLED LIBRARY APP MODE
+   ========================================================= */
+
+/* Fullscreen the library surface itself, hiding the browser's tab/toolbar UI. */
+#ja-reference-library-window:fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+  transform: none !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  resize: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#ja-reference-library-window:fullscreen::backdrop {
+  background: #fbfaf8;
+}
+
+/* Full viewport layout when opened as the separately installed PWA. */
+html.ja-lib-app-mode,
+html.ja-lib-app-mode body {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #fbfaf8;
+}
+html.ja-lib-app-mode #ja-reference-library-window {
+  position: fixed;
+  inset: 0;
+  left: 0;
+  top: 0;
+  transform: none;
+  width: 100vw;
+  width: 100dvw;
+  height: 100vh;
+  height: 100dvh;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: none;
+  display: none;
+  resize: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+html.ja-lib-app-mode #ja-reference-library-window.ja-lib-open {
+  display: flex;
+}
+html.ja-lib-app-mode #ja-reference-library-window .ja-lib-titlebar {
+  cursor: default;
+  touch-action: auto;
+}
+html.ja-lib-app-mode #ja-reference-library-launcher {
+  display: none !important;
+}
+
+
+/* Use the real operating-system window controls in the installed PWA.
+   The in-page traffic-light controls are only for the embedded website modal. */
+html.ja-lib-app-mode #ja-reference-library-window .ja-lib-window-controls,
+html.ja-lib-app-mode #ja-reference-library-window .ja-lib-header-spacer {
+  display: none !important;
+}
+html.ja-lib-app-mode #ja-reference-library-window .ja-lib-window-title {
+  text-align: left;
+}
+
+/* Fullscreen button in the library title bar. */
+#ja-reference-library-window .ja-lib-fullscreen {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(70,60,48,.12);
+  border-radius: 7px;
+  color: #625b50;
+  background: rgba(255,255,255,.45);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+#ja-reference-library-window .ja-lib-fullscreen:hover {
+  color: #49351d;
+  background: rgba(255,255,255,.9);
+}
+@media (max-width: 620px) {
+  #ja-reference-library-window .ja-lib-fullscreen {
+    flex-basis: 28px;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+
+/* =========================================================
+   LIBRARY THEME SYSTEM
+   Modes:
+   - website: inherit Jupiter Astro's live CSS theme variables
+   - apple: isolated Apple-style light palette for this window only
+   ========================================================= */
+
+#ja-reference-library-window[data-ja-lib-theme="website"] {
+  --ja-lib-bg: var(--paper, #F8FAFC);
+  --ja-lib-panel: var(--surface, #FFFFFF);
+  --ja-lib-panel-alt: var(--surface-alt, #F1F5F9);
+  --ja-lib-ink: var(--ink, #0F172A);
+  --ja-lib-muted: var(--muted, #64748B);
+  --ja-lib-line: var(--line, #E2E8F0);
+  --ja-lib-line-strong: var(--line-strong, #CBD5E1);
+  --ja-lib-accent: var(--saffron, #EA580C);
+  --ja-lib-accent-soft: var(--saffron-soft, rgba(234,88,12,.12));
+  --ja-lib-good: var(--good, #059669);
+  --ja-lib-good-soft: var(--good-soft, rgba(5,150,105,.12));
+  --ja-lib-amber: var(--amber, #D97706);
+  --ja-lib-alert-bg: var(--amber-soft, rgba(217,119,6,.12));
+  --ja-lib-alert-line: color-mix(in srgb, var(--ja-lib-amber) 34%, transparent);
+  --ja-lib-alert-ink: var(--ja-lib-amber);
+  --ja-lib-title-top: var(--surface, #FFFFFF);
+  --ja-lib-title-bottom: var(--surface-alt, #F1F5F9);
+  --ja-lib-hover: color-mix(in srgb, var(--ja-lib-panel-alt) 78%, var(--ja-lib-ink) 5%);
+  --ja-lib-active-bg: var(--ja-lib-accent-soft);
+  --ja-lib-active-ink: var(--ja-lib-accent);
+  --ja-lib-icon-bg: var(--ja-lib-accent-soft);
+  --ja-lib-icon-ink: var(--ja-lib-accent);
+  --ja-lib-shadow: 0 24px 80px rgba(0,0,0,.28), 0 4px 18px rgba(0,0,0,.12);
+  --bg: var(--ja-lib-bg);
+  --line: var(--ja-lib-line);
+  --ink: var(--ja-lib-ink);
+  --muted: var(--ja-lib-muted);
+  color: var(--ja-lib-ink);
+  background: var(--ja-lib-bg);
+  border-color: var(--ja-lib-line);
+  box-shadow: var(--ja-lib-shadow);
+  color-scheme: light dark;
+}
+
+#ja-reference-library-window[data-ja-lib-theme="apple"] {
+  --ja-lib-bg: #F5F5F7;
+  --ja-lib-panel: #FFFFFF;
+  --ja-lib-panel-alt: #EFEFF2;
+  --ja-lib-ink: #1D1D1F;
+  --ja-lib-muted: #6E6E73;
+  --ja-lib-line: rgba(60,60,67,.16);
+  --ja-lib-line-strong: rgba(60,60,67,.24);
+  --ja-lib-accent: #007AFF;
+  --ja-lib-accent-soft: rgba(0,122,255,.10);
+  --ja-lib-good: #248A3D;
+  --ja-lib-good-soft: rgba(36,138,61,.12);
+  --ja-lib-amber: #9A6700;
+  --ja-lib-alert-bg: #FFF7E5;
+  --ja-lib-alert-line: #F0D89A;
+  --ja-lib-alert-ink: #815600;
+  --ja-lib-title-top: #FAFAFC;
+  --ja-lib-title-bottom: #EDEDF0;
+  --ja-lib-hover: #F1F1F4;
+  --ja-lib-active-bg: #E6F1FF;
+  --ja-lib-active-ink: #0066CC;
+  --ja-lib-icon-bg: #EAF3FF;
+  --ja-lib-icon-ink: #007AFF;
+  --ja-lib-shadow: 0 24px 80px rgba(0,0,0,.26), 0 4px 18px rgba(0,0,0,.12);
+  --bg: var(--ja-lib-bg);
+  --line: var(--ja-lib-line);
+  --ink: var(--ja-lib-ink);
+  --muted: var(--ja-lib-muted);
+  color: var(--ja-lib-ink);
+  background: var(--ja-lib-bg);
+  border-color: var(--ja-lib-line);
+  box-shadow: var(--ja-lib-shadow);
+  color-scheme: light;
+}
+
+/* Make all Library surfaces consume the selected mode's tokens. */
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-titlebar {
+  color: var(--ja-lib-ink);
+  background: linear-gradient(var(--ja-lib-title-top), var(--ja-lib-title-bottom));
+  border-bottom-color: var(--ja-lib-line);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-window-title,
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-heading,
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-empty strong {
+  color: var(--ja-lib-ink);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-sidebar {
+  background: var(--ja-lib-panel-alt);
+  border-right-color: var(--ja-lib-line);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-side-heading,
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-status,
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-search-icon {
+  color: var(--ja-lib-muted);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-provider {
+  color: var(--ja-lib-ink);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-provider:hover {
+  background: var(--ja-lib-hover);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-provider.active {
+  color: var(--ja-lib-active-ink);
+  background: var(--ja-lib-active-bg);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-content {
+  background: var(--ja-lib-panel);
+  border-color: var(--ja-lib-line);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-empty {
+  color: var(--ja-lib-muted);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-empty-symbol {
+  color: var(--ja-lib-icon-ink);
+  background: var(--ja-lib-icon-bg);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-search {
+  color: var(--ja-lib-ink);
+  background: var(--ja-lib-panel);
+  border-color: var(--ja-lib-line-strong);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-search::placeholder {
+  color: var(--ja-lib-muted);
+  opacity: .78;
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-search:focus {
+  border-color: var(--ja-lib-accent);
+  box-shadow: 0 0 0 3px var(--ja-lib-accent-soft);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-readonly {
+  color: var(--ja-lib-good);
+  background: var(--ja-lib-good-soft);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-action {
+  color: var(--ja-lib-muted);
+  background: var(--ja-lib-panel-alt);
+  border-color: var(--ja-lib-line-strong);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-action.primary {
+  color: #fff;
+  background: var(--ja-lib-accent);
+  border-color: var(--ja-lib-accent);
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-notice {
+  color: var(--ja-lib-alert-ink);
+  background: var(--ja-lib-alert-bg);
+  border-color: var(--ja-lib-alert-line);
+}
+#ja-reference-library-launcher {
+  color: var(--ja-lib-ink, #443a2d);
+  background: var(--ja-lib-panel, #f5f1e9);
+  border-color: var(--ja-lib-line, rgba(70,60,48,.13));
+}
+#ja-reference-library-launcher button {
+  color: inherit;
+}
+#ja-reference-library-launcher button:hover {
+  background: var(--ja-lib-hover, #ebe3d6);
+}
+
+/* Round top-right appearance/theme selector. */
+#ja-reference-library-window .ja-lib-titlebar-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  gap: 8px;
+  margin-left: auto;
+  position: relative;
+  z-index: 1;
+}
+#ja-reference-library-window .ja-lib-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--ja-lib-line-strong, #dedad2);
+  border-radius: 50%;
+  color: var(--ja-lib-ink, #45413b);
+  background: var(--ja-lib-panel, rgba(255,255,255,.72));
+  cursor: pointer;
+  box-shadow: 0 2px 7px rgba(0,0,0,.08);
+  transition: transform 160ms ease, background-color 180ms ease,
+              border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+#ja-reference-library-window .ja-lib-theme-toggle:hover {
+  transform: translateY(-1px);
+  color: var(--ja-lib-accent, #007AFF);
+  border-color: var(--ja-lib-accent, #007AFF);
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+#ja-reference-library-window .ja-lib-theme-toggle:active {
+  transform: scale(.94);
+}
+#ja-reference-library-window .ja-lib-theme-toggle svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#ja-reference-library-window .ja-lib-fullscreen {
+  color: var(--ja-lib-ink, #625b50);
+  background: var(--ja-lib-panel, rgba(255,255,255,.45));
+  border-color: var(--ja-lib-line, rgba(70,60,48,.12));
+}
+#ja-reference-library-window .ja-lib-fullscreen:hover {
+  color: var(--ja-lib-accent, #49351d);
+  background: var(--ja-lib-hover, rgba(255,255,255,.9));
+}
+
+@media (max-width: 620px) {
+  #ja-reference-library-window .ja-lib-theme-toggle {
+    flex-basis: 31px;
+    width: 31px;
+    height: 31px;
+  }
+  #ja-reference-library-window .ja-lib-titlebar-tools {
+    gap: 5px;
+  }
+  #ja-reference-library-window .ja-lib-window-title {
+    font-size: 11px;
+  }
+}
+
+
+/* Targeted fixes for the three palette collisions (Library only). */
+
+/* Wooden Glass + Website theme: warm, readable Library surfaces. */
+html[data-palette="wooden"] #ja-reference-library-window[data-ja-lib-theme="website"] {
+  --ja-lib-bg:#F4E5CC; --ja-lib-panel:#FFF8EC; --ja-lib-panel-alt:#EAD7B9;
+  --ja-lib-ink:#382113; --ja-lib-muted:#765238;
+  --ja-lib-line:rgba(164,104,52,.32); --ja-lib-line-strong:rgba(164,104,52,.52);
+  --ja-lib-accent:#A85E22; --ja-lib-accent-soft:rgba(168,94,34,.14);
+  --ja-lib-title-top:#F7E8CE; --ja-lib-title-bottom:#E8C99B;
+  --ja-lib-hover:#F1DFC4; --ja-lib-active-bg:#E8C99B;
+  --ja-lib-active-ink:#5A3218; --ja-lib-icon-bg:#E8C99B; --ja-lib-icon-ink:#9B551D;
+  color-scheme:light;
+}
+
+/* Wooden Glass + Website theme: keep the status footer readable on its light surface. */
+html[data-palette="wooden"] #ja-reference-library-window[data-ja-lib-theme="website"] .ja-lib-status,
+html[data-palette="wooden"] #ja-reference-library-window[data-ja-lib-theme="website"] .ja-lib-status span {
+  color:var(--ja-lib-muted) !important;
+}
+
+/* Keep the status row neutral: let it share the Library's own background. */
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-status {
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  color:var(--ja-lib-muted) !important;
+}
+#ja-reference-library-window[data-ja-lib-theme] .ja-lib-status span {
+  color:var(--ja-lib-muted) !important;
+}
+
+/* Cosmic Glass + Apple Light: defeat the global Cosmic input !important rules. */
+#ja-reference-library-window[data-ja-lib-theme="apple"] .ja-lib-search {
+  background:#FFFFFF !important; color:#1D1D1F !important;
+  border-color:rgba(60,60,67,.24) !important;
+}
+#ja-reference-library-window[data-ja-lib-theme="apple"] .ja-lib-search::placeholder {
+  color:#6E6E73 !important;
+}
+
+
+/* Collapsible provider sidebar. The compact state keeps provider icons visible. */
+#ja-reference-library-window .ja-lib-sidebar-head {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:6px; margin:0 2px 12px 0; min-height:26px;
+}
+#ja-reference-library-window .ja-lib-sidebar-head .ja-lib-side-heading {
+  margin:0 0 0 9px; min-width:0;
+}
+#ja-reference-library-window .ja-lib-sidebar-toggle {
+  display:grid; place-items:center; flex:0 0 26px;
+  width:26px; height:26px; padding:0;
+  border:1px solid var(--ja-lib-line-strong, #d8d8dc);
+  border-radius:7px; color:var(--ja-lib-muted, #777);
+  background:transparent; cursor:pointer;
+}
+#ja-reference-library-window .ja-lib-sidebar-toggle:hover {
+  color:var(--ja-lib-accent, #4776d0);
+  background:var(--ja-lib-hover, #f1f1f4);
+}
+#ja-reference-library-window .ja-lib-sidebar-toggle svg {
+  width:15px; height:15px; fill:none; stroke:currentColor;
+  stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+  transition:transform 160ms ease;
+}
+#ja-reference-library-window .ja-lib-provider-tooltip { display:none; }
+
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-body {
+  grid-template-columns:72px minmax(0,1fr);
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-sidebar {
+  padding-left:8px; padding-right:8px;
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-sidebar-head {
+  justify-content:center;
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-side-heading {
+  display:none;
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-sidebar-toggle svg {
+  transform:rotate(180deg);
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-provider {
+  justify-content:center; gap:0; padding:11px 5px;
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-provider > span:not(.ja-lib-provider-icon) {
+  display:none;
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-provider-icon {
+  width:auto; font-size:18px;
+}
+
+@media (max-width:620px) {
+  #ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-body {
+    grid-template-columns:62px minmax(0,1fr);
+  }
+  #ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-sidebar {
+    padding-left:5px; padding-right:5px;
+  }
+}
+
+
+/* Visible provider-name tooltips when the sidebar is collapsed. */
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-sidebar {
+  overflow:visible;
+  z-index:30;
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-sidebar-head,
+#ja-reference-library-window.ja-lib-sidebar-collapsed #ja-lib-provider-nav {
+  position:relative;
+  z-index:2;
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-provider {
+  position:relative;
+  z-index:1;
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-provider:hover,
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-provider:focus-visible {
+  z-index:40;
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-provider::after {
+  content:attr(data-tooltip);
+  position:absolute;
+  left:calc(100% + 10px);
+  top:50%;
+  transform:translateY(-50%) translateX(-4px);
+  z-index:41;
+  padding:7px 11px;
+  border:1px solid var(--ja-lib-line-strong, #d5d5da);
+  border-radius:7px;
+  color:var(--ja-lib-ink, #222);
+  background:var(--ja-lib-panel, #fff);
+  box-shadow:0 5px 18px rgba(0,0,0,.16);
+  font:500 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  white-space:nowrap;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity 120ms ease, transform 120ms ease, visibility 120ms ease;
+}
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-provider:hover::after,
+#ja-reference-library-window.ja-lib-sidebar-collapsed .ja-lib-provider:focus-visible::after {
+  opacity:1;
+  visibility:visible;
+  transform:translateY(-50%) translateX(0);
+}
+
+
+/* Document preview module styles are loaded from library-preview.css. */
+
+/* Enabled footer actions must behave like active controls. */
+#ja-reference-library-window .ja-lib-action:not(:disabled) {
+  cursor:pointer;
+  opacity:1;
+}
+#ja-reference-library-window .ja-lib-action:not(:disabled):hover {
+  border-color:var(--ja-lib-accent,#a87332);
+  color:var(--ja-lib-ink,#292722);
+  background:var(--ja-lib-hover,#f1eee8);
+}
+
+
+/* One-line sign-in prompt shown when a signed-out user requests the Library. */
+#ja-library-auth-prompt {
+  position:fixed;
+  z-index:2147483647;
+  left:50%;
+  bottom:max(20px, env(safe-area-inset-bottom));
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  max-width:calc(100vw - 28px);
+  padding:10px 13px;
+  border:1.5px solid var(--bad, #DC2626);
+  border-radius:10px;
+  color:var(--ink, #292722);
+  background:var(--surface, #fff);
+  box-shadow:0 8px 28px rgba(0,0,0,.18);
+  font:500 12px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  white-space:nowrap;
+}
+#ja-library-auth-prompt .ja-library-auth-prompt-icon {
+  display:inline-flex;
+  flex:0 0 19px;
+  width:19px;
+  height:19px;
+  align-items:center;
+  justify-content:center;
+  color:var(--bad, #DC2626);
+}
+#ja-library-auth-prompt .ja-library-auth-prompt-icon svg {
+  display:block;
+  width:19px;
+  height:19px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+#ja-library-auth-prompt .ja-library-auth-prompt-message {
+  min-width:0;
+}
+#ja-library-auth-prompt .ja-library-auth-prompt-action {
+  flex:0 0 auto;
+  padding:7px 12px;
+  border:1px solid var(--saffron, #EA580C);
+  border-radius:8px;
+  color:#fff;
+  background:var(--saffron, #EA580C);
+  font:600 12px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor:pointer;
+  transition:background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+#ja-library-auth-prompt .ja-library-auth-prompt-action:hover {
+  background:color-mix(in srgb, var(--saffron, #EA580C) 88%, #000);
+  border-color:color-mix(in srgb, var(--saffron, #EA580C) 88%, #000);
+}
+#ja-library-auth-prompt .ja-library-auth-prompt-action:focus-visible {
+  outline:2px solid var(--saffron, #EA580C);
+  outline-offset:3px;
+}
+@media (max-width:520px) {
+  #ja-library-auth-prompt {
+    white-space:normal;
+    width:max-content;
+    max-width:calc(100vw - 24px);
+    gap:8px;
+  }
+}
