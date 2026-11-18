@@ -1,6 +1,6 @@
 name = "jupiterastro"
 main = "worker.js"
-compatibility_date = "2026-11-19"
+compatibility_date = "2026-11-18"
 workers_dev = true
 keep_vars = true
 
