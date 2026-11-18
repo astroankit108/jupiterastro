@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<title>Jupiter Astro — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Cormorant+Garamond:ital,wght@1,700&family=Hind:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Marcellus&display=swap">
+<link rel="stylesheet" href="/css/main67g120kS63cY438.css">
+<style>
+html,body{min-height:100%;margin:0}
+body{min-height:100vh;display:grid;place-items:center;padding:20px;box-sizing:border-box;background:var(--page,var(--bg,#f7f5f1));}
+#accountOpenBtn{display:none!important}
+.account-overlay{position:relative!important;inset:auto!important;display:flex!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;background:transparent!important;padding:0!important;z-index:1!important}
+.account-dialog-close{display:none!important}
+.account-dialog{max-height:calc(100vh - 40px);overflow:auto}
+#loginToast,#logoutToast{display:none!important}
+</style>
+</head>
+<body>
+<button id="accountOpenBtn" type="button" aria-hidden="true" tabindex="-1"></button>
+<div class="account-overlay"
+     id="accountOverlay"
+     aria-hidden="true">
+
+	<section class="account-dialog"
+           role="dialog"
+           aria-modal="true"
+           aria-label="Jupiter Astro account">
+
+    <!-- Dialogue Header -->
+    <div class="account-dialog-header">
+
+      <div class="account-dialog-brand">
+        <a class="logo" href="#">
+ 		 <span class="logo-main">Jupiter&nbsp;Astro</span>
+		  <span class="logo-sub">Research</span>
+		</a>
+        <small>Co-powered by <span class="account-dialog-powered-brand">Blissbond Astrology</span></small>
+      </div>
+
+      <button type="button"
+              class="account-dialog-close"
+              id="accountCloseBtn"
+              aria-label="Close dialogue">
+        &times;
+      </button>
+
+    </div>
+
+    <!-- Tabs -->
+    <div class="account-tabs">
+
+      <button type="button"
+              class="account-tab active"
+              id="signInTab"
+              aria-selected="true">
+        Sign In
+      </button>
+
+      <button type="button"
+              class="account-tab"
+              id="signUpTab"
+              aria-selected="false">
+        Set Password
+      </button>
+
+    </div>
+<!-- LOGGED-IN ACCOUNT VIEW -->
+<div id="loggedInPanel" class="account-hidden">
+
+  <div style="
+    text-align:center;
+    padding:12px 0 20px;
+  ">
+
+    <div style="
+      color:var(--muted);
+      font-size:0.85rem;
+      margin-bottom:6px;
+    ">
+      Currently signed in as
+    </div>
+
+    <div id="loggedInEmail" style="
+      color:var(--ink);
+      font-weight:700;
+      font-size:1rem;
+      overflow-wrap:anywhere;
+      margin-bottom:22px;
+    "></div>
+
+    <button
+      type="button"
+      id="logoutBtn"
+      class="account-submit"
+      style="max-width:180px; margin:auto;"
+    >
+      Logout
+    </button>
+
+  </div>
+
+</div>
+    <!-- SIGN IN FORM -->
+    <form class="account-form" id="signInForm">
+
+      <div class="account-field">
+        <label for="loginEmail">Email Address</label>
+        <input type="email"
+               id="loginEmail"
+               placeholder="Enter your email address"
+               autocomplete="email"
+               required>
+      </div>
+
+		<div
+  id="loginMessage"
+  class="account-message"
+  role="status"
+  aria-live="polite"
+  hidden
+></div>
+		
+      <div class="account-field">
+        <label for="loginPassword">Password</label>
+        <div class="account-disabled-hover" data-disabled-hint="Verify your email address first">
+          <input type="password"
+                 id="loginPassword"
+                 placeholder="Enter your password"
+                 autocomplete="current-password"
+                 disabled
+                 required>
+        </div>
+      </div>
+
+      <div class="account-options">
+
+        <label>
+          <input type="checkbox" id="rememberMe">
+          Keep me signed in
+        </label>
+
+        <a href="#" id="forgotPasswordBtn">
+          Forgot password?
+        </a>
+
+      </div>
+
+      <div class="account-disabled-hover" data-disabled-hint="Verify your email address first">
+        <button type="submit" class="account-submit" disabled>
+          Sign In
+        </button>
+      </div>
+
+      <p class="account-switch">
+  First time here?
+  <a href="#" id="switchToSignup">Set your password</a>
+</p>
+
+
+    </form>
+
+    <!-- FORGOT PASSWORD DIALOGUE PANEL -->
+    <section id="forgotPasswordPanel" class="account-form account-hidden"
+             aria-labelledby="forgotPasswordTitle">
+      <h3 id="forgotPasswordTitle" class="forgot-password-title">Reset your password</h3>
+      <p class="forgot-password-description">
+        Enter the email address associated with your Jupiter Astro account.
+        We’ll send you a password reset link if the account is eligible.
+      </p>
+
+      <form id="forgotPasswordForm" class="account-form">
+        <div class="account-field">
+          <label for="resetPasswordEmail">Email Address</label>
+          <input type="email" id="resetPasswordEmail"
+                 placeholder="Enter your email address"
+                 autocomplete="email" required>
+        </div>
+
+        <div id="forgotPasswordMessage" class="account-message"
+             role="status" aria-live="polite" hidden></div>
+
+        <div class="account-disabled-hover" data-disabled-hint="Verify your email address first">
+          <button type="submit" id="sendResetEmailBtn" class="account-submit" disabled>
+            Send Reset Link
+          </button>
+        </div>
+      </form>
+
+      <p class="account-switch">
+        <a href="#" id="backToLoginBtn">Back to Sign In</a>
+      </p>
+    </section>
+
+    <!-- Set Password FORM -->
+    
+<!-- SET PASSWORD FORM -->
+<form class="account-form account-hidden"
+      id="signUpForm">
+
+  <div class="account-field">
+    <label for="signupEmail">Authorized Email Address</label>
+    <input type="email"
+           id="signupEmail"
+           placeholder="Enter your authorized email address"
+           autocomplete="email"
+           required>
+  </div>
+
+<div
+  id="signupMessage"
+  class="account-message"
+  role="status"
+  aria-live="polite"
+  hidden
+></div>
+	
+  <div class="account-field">
+    <label for="signupPassword">Set Password</label>
+    <div class="account-disabled-hover" data-disabled-hint="Verify your email address first">
+      <input type="password"
+             id="signupPassword"
+             placeholder="Create a password"
+             autocomplete="new-password"
+             minlength="8"
+             disabled
+             required>
+    </div>
+  </div>
+
+  <div class="account-field">
+    <label for="confirmPassword">Confirm Password</label>
+    <div class="account-disabled-hover" data-disabled-hint="Verify your email address first">
+      <input type="password"
+             id="confirmPassword"
+             placeholder="Re-enter your password"
+             autocomplete="new-password"
+             minlength="8"
+             disabled
+             required>
+    </div>
+  </div>
+
+   <div class="account-disabled-hover" data-disabled-hint="Verify your email address first">
+     <button type="submit"
+          id="signupSubmitBtn"
+          class="account-submit"
+          disabled>
+       Set Password
+     </button>
+   </div>
+
+  <p class="account-switch">
+    Already have a password?
+    <a href="#" id="switchToSignin">Sign In</a>
+  </p>
+
+</form>
+
+  </section>
+</div>
+<div id="loginToast" role="status" aria-live="polite"></div>
+<div id="logoutToast" role="status" aria-live="polite"></div>
+<script type="module" src="/Firebase.js"></script>
+<script type="module" src="/Account.js"></script>
+<script type="module" src="/Email%20Verification.js"></script>
+<script>
+(function(){
+  const overlay=document.getElementById('accountOverlay');
+  if(overlay){overlay.classList.add('is-open');overlay.setAttribute('aria-hidden','false');}
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();}},true);
+  document.addEventListener('click',function(e){if(e.target===overlay){e.preventDefault();e.stopImmediatePropagation();}},true);
+  window.addEventListener('ja-cloudflare-session-ready',function(){if(location.pathname==='/login.html')location.replace('/');});
+})();
+</script>
+</body>
+</html>

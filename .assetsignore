@@ -1,0 +1,13 @@
+# Worker runtime and deployment configuration must never be published as assets.
+worker.js
+wrangler.toml
+.assetsignore
+cloudflare/
+README.md
+
+# Local tooling and secrets
+.git/
+.wrangler/
+node_modules/
+.dev.vars*
+.env*
