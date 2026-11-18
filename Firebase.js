@@ -17,6 +17,7 @@
     sendPasswordResetEmail,
     signOut,
     onAuthStateChanged,
+    onIdTokenChanged,
     setPersistence,
     browserLocalPersistence,
     browserSessionPersistence,
@@ -66,6 +67,7 @@
     sendPasswordResetEmail,
     signOut,
     onAuthStateChanged,
+    onIdTokenChanged,
     setPersistence,
     browserLocalPersistence,
     browserSessionPersistence,
@@ -166,7 +168,69 @@ copyExportObserver.observe(document.documentElement, {
   subtree: true
 });
 
-onAuthStateChanged(auth, function(user) {
+
+// ================= CLOUDFLARE GATEWAY SESSION =================
+// Firebase remains the identity provider. The Worker validates the ID token,
+// checks email verification + the Google Sheets allowlist, then issues an
+// HttpOnly signed cookie. No bearer token is stored in localStorage by us.
+let jaSessionSyncPromise = null;
+window.jaEnsureCloudflareSession = function (user) {
+  if (!user || !user.emailVerified) {
+    return Promise.reject(new Error("Please verify your email address before accessing Jupiter Astro."));
+  }
+  if (jaSessionSyncPromise) return jaSessionSyncPromise;
+
+  jaSessionSyncPromise = (async function () {
+    const idToken = await user.getIdToken();
+    const response = await fetch("/__auth/session", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.success !== true) {
+      throw new Error(result.error || "Could not establish a secure website session.");
+    }
+    window.dispatchEvent(new CustomEvent("ja-cloudflare-session-ready", {
+      detail: { email: user.email }
+    }));
+    return result;
+  })().finally(function () {
+    jaSessionSyncPromise = null;
+  });
+  return jaSessionSyncPromise;
+};
+
+async function jaClearCloudflareSession() {
+  try {
+    await fetch("/__auth/logout", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (error) {
+    console.warn("Jupiter Astro: Cloudflare session cleanup could not reach the Worker.", error);
+  }
+}
+
+onIdTokenChanged(auth, async function(user) {
+
+  // A verified Firebase user must also obtain the Worker-issued HttpOnly
+  // session before protected application assets can be served.
+  if (user && user.emailVerified) {
+    try {
+      await window.jaEnsureCloudflareSession(user);
+    } catch (sessionError) {
+      console.error("Jupiter Astro: Cloudflare session establishment failed.", sessionError);
+      publishJaAuthState(null);
+      return;
+    }
+  } else {
+    // A signed-in but unverified account must never retain a previous user's
+    // Worker cookie.
+    await jaClearCloudflareSession();
+  }
 
   // Publish the current login state and notify gated features.
   publishJaAuthState(user);
