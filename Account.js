@@ -169,9 +169,8 @@ if (logoutBtn) {
 
     try {
 
-      const loggingOutUser = auth.currentUser;
       await api.signOut(auth);
-      if (typeof window.jaLogAuthEvent === 'function') window.jaLogAuthEvent('LOGOUT', 'SUCCESS', loggingOutUser && loggingOutUser.email, 'User initiated logout');
+      await fetch("/__auth/logout", { method: "POST", credentials: "same-origin" });
 
       // Close account popup
       closeAccount();
@@ -183,7 +182,6 @@ if (logoutBtn) {
     } catch (error) {
 
       console.error('Logout error:', error);
-      if (typeof window.jaLogAuthEvent === 'function') window.jaLogAuthEvent('LOGOUT', 'FAILED', auth.currentUser && auth.currentUser.email, error && error.code || 'sign_out_failed');
 
       alert('Unable to log out. Please try again.');
 
@@ -304,8 +302,6 @@ signUpForm.addEventListener('submit', async function (e) {
 
     // Firebase automatically signs in the newly created user
     const user = credential.user;
-    if (typeof window.jaLogAuthEvent === 'function') window.jaLogAuthEvent('SET_PASSWORD', 'SUCCESS', user.email, 'Authorized account created; verification email follows');
-    if (typeof window.jaLogAuthEvent === 'function') window.jaLogAuthEvent('LOGIN', 'SUCCESS', user.email, 'Automatic sign-in after account creation');
 
     // Send email verification link
     try {
@@ -394,7 +390,6 @@ if (typeof window.jaLockEmailVerificationForm === 'function') {
         console.error('Firebase account creation error:', error);
     }
 
-    if (typeof window.jaLogAuthEvent === 'function') window.jaLogAuthEvent('SET_PASSWORD', 'FAILED', email, error && error.code || 'account_creation_failed');
     messageBox.textContent = errorMessage;
     messageBox.className = 'account-message error';
 
@@ -456,6 +451,10 @@ signInForm.addEventListener('submit', async function (e) {
       password
     );
 
+    // Do not reveal the application until Cloudflare has issued its signed,
+    // HttpOnly session after server-side Firebase + allowlist verification.
+    await window.jaEnsureCloudflareSession(credential.user);
+
     console.log(
       'Jupiter Astro: User signed in successfully.',
       credential.user.email
@@ -465,7 +464,6 @@ signInForm.addEventListener('submit', async function (e) {
     // Close the dialogue, clear credentials, and confirm success consistently
     // with the logout toast.
     signInSucceeded = true;
-    if (typeof window.jaLogAuthEvent === 'function') window.jaLogAuthEvent('LOGIN', 'SUCCESS', credential.user.email, 'Firebase sign-in succeeded');
     closeAccount();
     resetSignInForm();
     showAuthToast('You have been logged in successfully.', 'login');
@@ -473,9 +471,10 @@ signInForm.addEventListener('submit', async function (e) {
   } catch (error) {
 
     console.error('Firebase Sign In Error:', error);
-    if (typeof window.jaLogAuthEvent === 'function') window.jaLogAuthEvent('LOGIN', 'FAILED', email, error && error.code || 'sign_in_failed');
 
-    let errorMessage = 'Unable to sign in. Please try again.';
+    let errorMessage = error && error.message && /verify your email|authorized|secure website session|access Jupiter Astro/i.test(error.message)
+      ? error.message
+      : 'Unable to sign in. Please try again.';
 
     switch (error.code) {
 
@@ -606,7 +605,6 @@ signInForm.addEventListener('submit', async function (e) {
 
       try {
         await api.sendPasswordResetEmail(auth, email);
-        if (typeof window.jaLogAuthEvent === 'function') window.jaLogAuthEvent('PASSWORD_RESET_REQUEST', 'SUCCESS', email, 'Reset email request accepted by Firebase');
         forgotPasswordMessage.textContent =
           'If an account exists for this email address, a password reset link has been sent. Please check your inbox and spam folder.';
         forgotPasswordMessage.className = 'account-message success';
@@ -614,7 +612,6 @@ signInForm.addEventListener('submit', async function (e) {
         // the verification state stale while the submit button stayed enabled.
       } catch (error) {
         console.error('Password reset email error:', error);
-        if (typeof window.jaLogAuthEvent === 'function') window.jaLogAuthEvent('PASSWORD_RESET_REQUEST', 'FAILED', email, error && error.code || 'password_reset_request_failed');
 
         let message = 'Unable to send the reset email. Please try again later.';
         if (error.code === 'auth/invalid-email') {
