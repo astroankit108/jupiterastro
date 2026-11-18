@@ -262,8 +262,8 @@ window.jaEnsureCloudflareSession = function (user) {
     }
 
     // Force a fresh Firebase ID token after profile refresh.
-    const idToken = await user.getIdToken(true);
-
+     const idToken = await user.getIdToken();
+     
     // Exchange Firebase ID token for Cloudflare session.
     const response = await fetch("/__auth/session", {
       method: "POST",
