@@ -170,10 +170,26 @@ async function exchangeFirebaseToken(request, env) {
   }
 
   const lookup = await lookupResponse.json().catch(() => ({}));
-  const user = Array.isArray(lookup.users) && lookup.users[0];
-  if (!lookupResponse.ok || !user || !user.localId || !user.email) {
-    return json({ success: false, error: "Your login has expired. Please sign in again." }, 401);
-  }
+
+const user = Array.isArray(lookup.users)
+  ? lookup.users[0]
+  : null;
+
+if (!lookupResponse.ok || !user || !user.localId || !user.email) {
+
+  console.error("JA Firebase token validation failed:", {
+    status: lookupResponse.status,
+    firebaseError: lookup?.error?.message || null,
+    hasUsers: Array.isArray(lookup.users),
+    hasLocalId: !!user?.localId,
+    hasEmail: !!user?.email
+  });
+
+  return json({
+    success: false,
+    error: "Firebase token validation failed. Check Worker diagnostics."
+  }, 401);
+}
   if (user.emailVerified !== true) {
     return json({ success: false, error: "Please verify your email address before accessing Jupiter Astro." }, 403);
   }
