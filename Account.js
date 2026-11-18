@@ -169,13 +169,18 @@ if (logoutBtn) {
 
     try {
 
-      await api.signOut(auth);
-      await fetch("/__auth/logout", { method: "POST", credentials: "same-origin" });
+      const email = auth.currentUser?.email || window.jaAuthUser?.email || '';
 
-      // Close account popup
+      // Firebase.js owns cookie cleanup. Do not send a second logout request.
+      if (typeof window.jaSignOut === 'function') {
+        await window.jaSignOut();
+      } else {
+        await api.signOut(auth);
+      }
+
+      window.jaLogAuthEvent?.('LOGOUT', 'SUCCESS', email, 'User signed out');
+
       closeAccount();
-
-      // Clear any previously entered credentials and show confirmation.
       resetSignInForm();
       showAuthToast('You have been logged out successfully.', 'logout');
 
@@ -309,24 +314,36 @@ signUpForm.addEventListener('submit', async function (e) {
       await api.sendEmailVerification(user);
 
       messageBox.textContent =
-        'Your account has been created successfully. A verification link has been sent to ' +
+        'Your account has been created. A verification link has been sent to ' +
         email +
-        '. You are signed in for this browser session.';
+        '. Verify your email before signing in.';
 
       messageBox.className = 'account-message success';
+      window.jaLogAuthEvent?.('ACCOUNT_CREATED', 'SUCCESS', email, 'Verification email sent');
 
     } catch (verificationError) {
 
       messageBox.textContent =
-        'Your account was created and you are signed in, but the verification email could not be sent. Please try again later.';
+        'Your account was created, but the verification email could not be sent. Please request a new verification email later.';
 
       messageBox.className = 'account-message error';
+      window.jaLogAuthEvent?.('ACCOUNT_CREATED', 'PARTIAL', email, 'Verification email could not be sent');
 
       console.error(
         'Email verification error:',
         verificationError
       );
 
+    }
+
+    // A newly-created account is not yet eligible for the protected app.
+    // Sign it out after the verification-email attempt; the user can sign in
+    // normally once Firebase reports emailVerified=true.
+    try {
+      if (typeof window.jaSignOut === 'function') await window.jaSignOut();
+      else await api.signOut(auth);
+    } catch (signOutError) {
+      console.warn('Newly-created unverified account could not be signed out:', signOutError);
     }
 
     
@@ -459,6 +476,7 @@ signInForm.addEventListener('submit', async function (e) {
       'Jupiter Astro: User signed in successfully.',
       credential.user.email
     );
+    window.jaLogAuthEvent?.('LOGIN', 'SUCCESS', credential.user.email, 'Firebase and Cloudflare session established');
 
     // Firebase onAuthStateChanged updates the account button.
     // Close the dialogue, clear credentials, and confirm success consistently
@@ -471,8 +489,15 @@ signInForm.addEventListener('submit', async function (e) {
   } catch (error) {
 
     console.error('Firebase Sign In Error:', error);
+    window.jaLogAuthEvent?.('LOGIN', 'FAILED', email, error?.code || error?.message || 'Sign-in failed');
 
-    let errorMessage = error && error.message && /verify your email|authorized|secure website session|access Jupiter Astro/i.test(error.message)
+    if (error?.status === 403 && typeof window.jaSignOut === 'function') {
+      try { await window.jaSignOut(); } catch (signOutError) {
+        console.warn('Rejected sign-in cleanup failed:', signOutError);
+      }
+    }
+
+    let errorMessage = error && error.message && /verify your email|authorized|secure website session|access Jupiter Astro|secure login service|identity verification|Firebase server API key|different Firebase project/i.test(error.message)
       ? error.message
       : 'Unable to sign in. Please try again.';
 
