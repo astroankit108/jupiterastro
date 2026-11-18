@@ -1624,7 +1624,7 @@ h1, h2, h3 {
   font-family: "Source Sans 3", system-ui, -apple-system, sans-serif; 
   font-weight: 700; 
 }
-.brand { background: var(--surface); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100000; }.brand .wrap { display: flex; align-items: center; justify-content: space-between; padding-block: 10px; }
+.brand { background: var(--surface); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100000; }.brand .wrap { display: flex; align-items: center; justify-content: space-between; padding-block: 7px; }
 .logo {
   display: flex;
   align-items: baseline;
@@ -3841,6 +3841,11 @@ padding: 28px 30px;
   font-size: 0.78rem;
 }
 
+.account-dialog-brand .account-dialog-powered-brand {
+  color: var(--saffron);
+  font-weight: 700;
+}
+
 .account-dialog-close {
   width: 34px;
   height: 34px;
@@ -4431,12 +4436,18 @@ flex-shrink: 0;
   background: transparent;
 }
 
-/* Keep planetary occupants on a separate line beneath each Nakshatra. */
+/* Keep planetary occupants inline beside their Nakshatra, comma-separated. */
 .ja-navtara-occupant {
-  display: block;
-  margin-top: 3px;
-  color: var(--ink);
+  display: inline;
+  margin: 0;
   font-weight: 800;
+}
+
+/* Let a crowded occupant list wrap naturally instead of being clipped. */
+.ja-navtara-occupants {
+  display: inline;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 
